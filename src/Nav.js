@@ -20,7 +20,7 @@ function Nav() {
           <NavLink className="nav-link" to="/scrape-data">
             Scrape Data
           </NavLink>
-          <NavLink className="nav-link" to="/my-collections">
+          <NavLink className="nav-link" to="/collections">
             My Collections
           </NavLink>
           <NavLink className="nav-link" to="/about">
