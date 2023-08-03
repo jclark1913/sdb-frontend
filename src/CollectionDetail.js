@@ -7,7 +7,7 @@ import SDBApi from './api/api';
  *
  * Renders information about a collection, including its entries.
  *
- * Props: None+
+ * Props: None
  *
  * State: Company, isLoading
  *
@@ -34,7 +34,7 @@ function CollectionDetail() {
     getCollection();
   }, [id]);
 
-  if (errors.length) return <Alert type="danger" messages={errors} />;
+  if (errors.length) return <div>{errors}</div>;
   if (!collection) return <h1>Loading...</h1>;
 
   return (
