@@ -47,6 +47,7 @@ function CollectionList() {
               id={c.id}
               name={c.name}
               description={c.description}
+              createdAt={c.created_at}
             />
           )) : null}
       </div>
