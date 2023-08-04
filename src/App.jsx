@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Nav from 'src/components/navigation/Nav';
-import './App.css';
 import RoutesList from './RoutesList';
 
 function App() {
