@@ -45,6 +45,12 @@ class SDBApi {
     return res;
   }
 
+  /** Get entry by id */
+  static async getEntry(id) {
+    let res = await this.request(`/api/entries/${id}`);
+    return res;
+  }
+
 }
 
 export default SDBApi;

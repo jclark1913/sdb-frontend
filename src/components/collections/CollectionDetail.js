@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import "./CollectionDetail.css";
-import SDBApi from './api/api';
+import SDBApi from 'api/api';
+import EntriesList from 'components/entries/EntriesList';
 
 /** CollectionDetail
  *
@@ -42,6 +43,7 @@ function CollectionDetail() {
       <h4 className="CollectionDetail-title">{collection.name}</h4>
       <p className="CollectionDetail-description">{collection.description}</p>
       <p className="CollectionDetail-created-at">{collection.created_at}</p>
+      <EntriesList entries={collection.entries} />
     </div>
   )
 

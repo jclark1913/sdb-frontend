@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import "./CollectionList.css";
-import CollectionCard from './CollectionCard';
-import SDBApi from './api/api';
+import CollectionCard from 'components/collections/CollectionCard';
+import SDBApi from 'api/api';
 
 /** CollectionList
  *
