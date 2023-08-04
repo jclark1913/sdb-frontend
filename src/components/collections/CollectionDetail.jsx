@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import "./CollectionDetail.css";
-import SDBApi from 'api/api';
-import EntriesList from 'components/entries/EntriesList';
+import SDBApi from 'src/api/api';
+import EntriesList from 'src/components/entries/EntriesList';
 
 /** CollectionDetail
  *

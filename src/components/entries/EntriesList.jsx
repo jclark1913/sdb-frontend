@@ -1,6 +1,5 @@
 import React from "react";
-import EntryCard from "components/entries/EntryCard";
-import "./EntriesList.css";
+import EntryCard from "src/components/entries/EntryCard";
 
 /** EntriesList
  *

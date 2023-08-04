@@ -1,5 +1,4 @@
 import { Link, NavLink } from 'react-router-dom';
-import './Nav.css';
 import { useContext } from 'react';
 
 /** Nav bar for app that shows on every page.

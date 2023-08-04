@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import "./EntryCard.css";
-import SDBApi from "api/api";
+import SDBApi from "src/api/api";
 
 /** EntryDetail
  *

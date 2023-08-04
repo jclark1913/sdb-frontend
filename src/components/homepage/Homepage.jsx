@@ -1,5 +1,4 @@
 import React from 'react';
-import "./Homepage.css";
 
 /** Homepage of app
  *
@@ -13,8 +12,8 @@ import "./Homepage.css";
 
 function Homepage() {
   return (
-    <div className="Homepage">
-      <h1>Homepage rendered</h1>
+    <div className="Homepage bg-black text-green-800">
+      <h1 className="text-left text-green-600">Homepage rendered</h1>
     </div>
   );
 }

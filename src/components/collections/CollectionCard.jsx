@@ -1,8 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import "./CollectionCard.css";
-
 /** Shows basic info about a given collection
  *
  * Rendered by CollectionList to a show a card for each collection.
