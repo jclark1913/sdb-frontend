@@ -20,6 +20,7 @@ function EntryDetail() {
 
   const [entry, setEntry] = useState(null);
   const [errors, setErrors] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [fullTextShowMore, setFullTextShowMore] = useState(false);
   const [translatedTextShowMore, setTranslatedTextShowMore] = useState(false);
@@ -35,7 +36,7 @@ function EntryDetail() {
       }
     }
     getEntry();
-  }, [id]);
+  }, [id, isLoading, errors]);
 
   function handleFullTextShowMore() {
     if (entry.full_text === null) return "No full text available.";
@@ -53,22 +54,47 @@ function EntryDetail() {
     if (entry.ai_summary === null) return "No AI summary available.";
 
     return aiSummaryShowMore ? entry.ai_summary : entry.ai_summary.slice(0, 250);
+  }
+
+  async function handleTranslation() {
+    const entryId = parseInt(id)
+    const data = {"entry_ids": [entryId]}
+    setIsLoading(true)
+    try {
+      await SDBApi.translateEntries(data)
+      setIsLoading(false)
+    } catch (err) {
+      setErrors(err)
+    }
+  }
+
+  async function handleSummarize() {
+    const entryId = parseInt(id)
+    const data = {"entry_ids": [entryId]}
+    setIsLoading(true)
+    try {
+      await SDBApi.summarizeEntries(data)
+      setIsLoading(false)
+    } catch (err) {
+      setErrors(err)
+    }
 
   }
 
+
   if (errors.length) return <div>{errors}</div>;
-  if (!entry) return <h1>Loading...</h1>;
+  if (!entry || isLoading === true) return <h1>Loading...</h1>;
 
   return (
     <div>
-      <div className="px-4 sm:px-0 flex flex-1">
+      <div className="px-4 sm:px-0 flex flex-1 justify-between">
         <div>
           <h3 className="text-base font-semibold leading-7 text-gray-900">Entry details</h3>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Use the buttons to edit.</p>
         </div>
-        <div className="flex flex-1 justify-end gap-10">
-        <button>Translate</button>
-        <button>Get AI Summary</button>
+        <div className="flex justify-center gap-0 rounded-md border">
+          <button onClick={() => handleTranslation()} className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Translate</button>
+          <button onClick={() => handleSummarize()} className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Get AI Summary</button>
         </div>
 
       </div>
