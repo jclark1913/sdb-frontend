@@ -22,7 +22,7 @@ class SDBApi {
       : {};
 
     try {
-      return (await axios({ url, method, paramsOrData, params })).data;
+      return (await axios({ url, method, data: paramsOrData, params })).data;
     } catch (err) {
       console.error("API Error:", err.response);
       let message = err.response.data.error.message;
@@ -35,20 +35,32 @@ class SDBApi {
   /** Get collections */
 
   static async getCollections() {
-    let res = await this.request("/api/collections");
+    let res = await this.request("api/collections");
     return res
   }
 
   /** Get collection by id */
   static async getCollection(id) {
-    let res = await this.request(`/api/collections/${id}`);
+    let res = await this.request(`api/collections/${id}`);
     return res;
   }
 
   /** Get entry by id */
   static async getEntry(id) {
-    let res = await this.request(`/api/entries/${id}`);
+    let res = await this.request(`api/entries/${id}`);
     return res;
+  }
+
+  /**Translate entries */
+  static async translateEntries(data) {
+    let res = await this.request(`api/translate`, data, "post");
+    return res;
+  }
+
+  /**Summarize entries */
+  static async summarizeEntries(data) {
+    let res = await this.request(`api/summarize`, data, "post");
+    return res
   }
 
 }
