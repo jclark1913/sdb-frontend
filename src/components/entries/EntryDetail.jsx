@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import SDBApi from "src/api/api";
+import { PaperClipIcon } from '@heroicons/react/20/solid';
 
 /** EntryDetail
  *
@@ -20,6 +21,10 @@ function EntryDetail() {
   const [entry, setEntry] = useState(null);
   const [errors, setErrors] = useState([]);
 
+  const [fullTextShowMore, setFullTextShowMore] = useState(false);
+  const [translatedTextShowMore, setTranslatedTextShowMore] = useState(false);
+  const [aiSummaryShowMore, setAISummaryShowMore] = useState(false);
+
   useEffect(function getEntryOnMount() {
     async function getEntry() {
       try {
@@ -32,23 +37,95 @@ function EntryDetail() {
     getEntry();
   }, [id]);
 
+  function handleFullTextShowMore() {
+    if (entry.full_text === null) return "No full text available.";
+
+    return fullTextShowMore ? entry.full_text : entry.full_text.slice(0, 250);
+  }
+
+  function handleTranslatedTextShowMore() {
+    if (entry.full_text_translated === null) return "No translation available.";
+
+    return translatedTextShowMore ? entry.full_text_translated : entry.full_text_translated.slice(0, 250);
+  }
+
+  function handleAISummaryShowMore() {
+    if (entry.ai_summary === null) return "No AI summary available.";
+
+    return aiSummaryShowMore ? entry.ai_summary : entry.ai_summary.slice(0, 250);
+
+  }
+
   if (errors.length) return <div>{errors}</div>;
   if (!entry) return <h1>Loading...</h1>;
 
   return (
-    <div className="EntryDetail">
-      <p className="EntryDetail-id">{entry.id}</p>
-      <p className="EntryDetail-Date-Posted">{entry.date_posted}</p>
-      <p className="EntryDetail-Publication">{entry.publication}</p>
-      <h4 className="EntryDetail-title">{entry.title}</h4>
-      <p className="EntryDetail-Title-Translated">{entry.title_translated}</p>
-      <p className="EntryDetail-Full-Text">{entry.full_text}</p>
-      <p className="EntryDetail-Full-Text-Translated">{entry.full_text_translated}</p>
-      <p className="EntryDetail-AI-Summary">{entry.ai_summary}</p>
-      <a className="EntryDetail-Link" href={entry.link}>Article Link</a>
-      <a href={`/collections/${entry.collection_id}`}>
-        <p className="EntryDetail-Collection-Id">{entry.collection_id}</p>
-      </a>
+    <div>
+      <div className="px-4 sm:px-0 flex flex-1">
+        <div>
+          <h3 className="text-base font-semibold leading-7 text-gray-900">Entry details</h3>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Use the buttons to edit.</p>
+        </div>
+        <div className="flex flex-1 justify-end gap-10">
+        <button>Translate</button>
+        <button>Get AI Summary</button>
+        </div>
+
+      </div>
+      <div className="mt-6 border-t border-gray-100">
+        <dl className="divide-y divide-gray-100">
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">Date posted</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{entry.date_posted}</dd>
+          </div>
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">Title (Arabic)</dt>
+            <dd dir="rtl" className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{entry.title}</dd>
+          </div>
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">Title (Translated)</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+              {entry.title_translated !== null ?
+                entry.title_translated : "No translation available."}
+            </dd>
+          </div>
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">Publication</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{entry.publication}</dd>
+          </div>
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">AI summary</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+              {handleAISummaryShowMore()}
+              {entry.ai_summary && (<button onClick={() => setAISummaryShowMore(!aiSummaryShowMore)} className="text-blue-500 hover:text-blue-700">
+                {aiSummaryShowMore ? "...show less" : "...show more"}</button>)}
+            </dd>
+          </div>
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">Full text (translated)</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+              {handleTranslatedTextShowMore()}
+              {entry.full_text_translated && (<button onClick={() => setTranslatedTextShowMore(!translatedTextShowMore)} className="text-blue-500 hover:text-blue-700">
+                {translatedTextShowMore ? "...show less" : "...show more"}</button>)
+              }
+            </dd>
+          </div>
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">Full text</dt>
+            <dd dir="rtl" className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+              {handleFullTextShowMore()}
+              {entry.full_text && (<button onClick={() => setFullTextShowMore(!fullTextShowMore)} className="text-blue-500 hover:text-blue-700">
+                {fullTextShowMore ? "...show less" : "...show more"}</button>)}
+            </dd>
+          </div>
+
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">Link</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"><a href={entry.link}>View original</a></dd>
+          </div>
+
+        </dl>
+      </div>
     </div>
   );
 
