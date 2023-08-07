@@ -10,13 +10,15 @@ import { Link } from 'react-router-dom';
 
 function CollectionCard({ id, name, description, createdAt }) {
   return (
-    <a className="CollectionCard" href={`/collections/${id}`}>
-      <div className="card-body">
-        <h5 className="card-title">{name}</h5>
-        <p className="card-text">{description}</p>
-        <p className="card-text"><small className="text-muted">{createdAt}</small></p>
-      </div>
-    </a>
+    <div className="CollectionCard max-w-sm rounded shadow-sm border hover:bg-gray-700 hover:text-white" href={`/collections/${id}`}>
+      <a href={`/collections/${id}`}>
+        <div className="card-body px-6 py-4 flex-col">
+          <h5 className="text-xl font-medium pb-3">{name}</h5>
+          <p className="card-text text-">{description}</p>
+          <p className="card-text self-end">{createdAt}</p>
+        </div>
+      </a>
+    </div>
   );
 }
 
