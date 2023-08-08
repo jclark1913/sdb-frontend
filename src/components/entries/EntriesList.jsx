@@ -32,12 +32,20 @@ function EntriesList({ entries }) {
       accessorKey: 'date_posted',
     },
     {
+      header: 'Publication',
+      accessorKey: 'publication',
+    },
+    {
       header: 'Title (Arabic)',
       accessorKey: 'title',
     },
     {
       header: 'Title (translated)',
       accessorKey: 'title_translated',
+    },
+    {
+      header: 'AI summary',
+      accessorKey: 'ai_summary',
     },
     {
       header: 'Full text (Arabic)',
@@ -47,10 +55,6 @@ function EntriesList({ entries }) {
       header: 'Full text (translated)',
       accessorKey: 'full_text_translated',
     },
-    {
-      header: 'AI summary',
-      accessorKey: 'ai_summary',
-    }
   ];
 
   const table = useReactTable({
@@ -67,16 +71,18 @@ function EntriesList({ entries }) {
 
   return (
     <div className="EntriesList overflow-x-auto">
-      <label>
-        <input {...{
-          type: "checkbox",
-          checked: table.getIsAllColumnsVisible(),
-          onChange: table.getToggleAllColumnsVisibilityHandler(),
-        }}
-        /> {' '}
-        Toggle all
-      </label>
-      {table.getAllLeafColumns().map(column => {
+      <div className="flex flex-row gap-1 text-xs text-gray-700 rounded-md border p-4">
+        <label>
+          <input {...{
+            type: "checkbox",
+            checked: table.getIsAllColumnsVisible(),
+            onChange: table.getToggleAllColumnsVisibilityHandler(),
+            style: { marginRight: 8, textAlign: 'center'},
+          }}
+          /> {' '}
+          <span className="font-bold">Show/hide all</span>
+        </label>
+        {table.getAllLeafColumns().map(column => {
           return (
             <div key={column.id} className="px-1">
               <label>
@@ -85,13 +91,15 @@ function EntriesList({ entries }) {
                     type: 'checkbox',
                     checked: column.getIsVisible(),
                     onChange: column.getToggleVisibilityHandler(),
+                    style: { marginRight: 8, textAlign: 'center' },
                   }}
                 />{' '}
-                {column.id}
+                <span>{column.id}</span>
               </label>
             </div>
-          )
+          );
         })}
+      </div>
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-center text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           {table.getHeaderGroups().map(headerGroup => (
@@ -101,9 +109,9 @@ function EntriesList({ entries }) {
                   {header.isPlaceholder
                     ? null
                     : flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
                 </th>
               ))}
             </tr>
