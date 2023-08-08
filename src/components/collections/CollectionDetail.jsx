@@ -49,15 +49,22 @@ function CollectionDetail() {
           <p className="">{collection.description}</p>
           <p className="">{collection.created_at}</p>
         </div>
-        <div className="flex">
-        <button
-          onClick={() => console.log("Edit Collection button clicked")}
-          className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10">Edit</button>
-        <button
-          onClick={() => { handleExpandClick(); console.log("Expand Collection button clicked"); }}
-          className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10">
-          {isExpanded ? <ArrowsPointingInIcon className="stroke-white block h-6 w-6" /> : <ArrowsPointingOutIcon className="stroke-white block h-6 w-6" />}
-        </button>
+        <div className='flex flex-col'>
+          <div className="flex flex-grow justify-between">
+            <button
+              onClick={() => console.log("Edit Collection button clicked")}
+              className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10">Edit</button>
+            <button
+              onClick={() => { handleExpandClick(); console.log("Expand Collection button clicked"); }}
+              className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10">
+              {isExpanded ? <ArrowsPointingInIcon className="stroke-white block h-6 w-6" /> : <ArrowsPointingOutIcon className="stroke-white block h-6 w-6" />}
+            </button>
+          </div>
+          <button
+            onClick={() => console.log("Print to excel clicked")}
+            className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10">
+            Print to Excel
+            </button>
         </div>
       </div>
       <EntriesList entries={collection.entries} />
