@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import EntryCard from "src/components/entries/EntryCard";
-import { useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
+import { Link } from "react-router-dom";
 
 /** EntriesList
  *
@@ -14,7 +16,9 @@ import { useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-tabl
 
 function EntriesList({ entries }) {
 
-  const data = useMemo(() => entries, [entries]);
+  const navigate = useNavigate();
+
+  const data = useMemo(() => entries, []);
 
   const columns = [
     {
@@ -36,18 +40,27 @@ function EntriesList({ entries }) {
     {
       header: 'Full text (Arabic)',
       accessorKey: 'full_text',
+    },
+    {
+      header: 'Full text (translated)',
+      accessorKey: 'full_text_translated',
+    },
+    {
+      header: 'AI summary',
+      accessorKey: 'ai_summary',
     }
   ];
 
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel()
+    getCoreRowModel: getCoreRowModel(),
+    // getPaginationRowModel: getPaginationRowModel()
   });
 
 
   return (
-    <div className="EntriesList">
+    <div className="EntriesList overflow-x-auto">
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           {table.getHeaderGroups().map(headerGroup => (
@@ -65,13 +78,19 @@ function EntriesList({ entries }) {
         </thead>
         <tbody>
           {table.getRowModel().rows.map(row => (
-            <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700" key={row.id}>
+
+            <tr
+              className="bg-white border-b dark:bg-gray-900 dark:border-gray-700"
+              key={row.id}
+              onClick={() => navigate(`/entries/${row.getValue("id")}`)}
+            >
               {row.getVisibleCells().map(cell => (
                 <td className="px-6 py-4" key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
             </tr>
+
           ))}
         </tbody>
 
