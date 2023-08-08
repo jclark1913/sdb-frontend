@@ -20,6 +20,8 @@ function EntriesList({ entries }) {
 
   const data = useMemo(() => entries, []);
 
+  const [columnVisibility, setColumnVisibility] = React.useState({});
+
   const columns = [
     {
       header: 'ID',
@@ -54,6 +56,10 @@ function EntriesList({ entries }) {
   const table = useReactTable({
     data,
     columns,
+    state: {
+      columnVisibility,
+    },
+    onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     // getPaginationRowModel: getPaginationRowModel()
   });
@@ -61,13 +67,40 @@ function EntriesList({ entries }) {
 
   return (
     <div className="EntriesList overflow-x-auto">
+      <label>
+        <input {...{
+          type: "checkbox",
+          checked: table.getIsAllColumnsVisible(),
+          onChange: table.getToggleAllColumnsVisibilityHandler(),
+        }}
+        /> {' '}
+        Toggle all
+      </label>
+      {table.getAllLeafColumns().map(column => {
+          return (
+            <div key={column.id} className="px-1">
+              <label>
+                <input
+                  {...{
+                    type: 'checkbox',
+                    checked: column.getIsVisible(),
+                    onChange: column.getToggleVisibilityHandler(),
+                  }}
+                />{' '}
+                {column.id}
+              </label>
+            </div>
+          )
+        })}
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <thead className="text-xs text-center text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => (
-                <th scope="col" className="px6 py-4" key={header.id}>
-                  {flexRender(
+                <th scope="col" className="px6 py-4" key={header.id} colSpan={header.colSpan}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
                     header.column.columnDef.header,
                     header.getContext()
                   )}
@@ -80,7 +113,7 @@ function EntriesList({ entries }) {
           {table.getRowModel().rows.map(row => (
 
             <tr
-              className="bg-white border-b dark:bg-gray-900 dark:border-gray-700"
+              className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 hover:bg-gray-100 hover:cursor-pointer"
               key={row.id}
               onClick={() => navigate(`/entries/${row.getValue("id")}`)}
             >
