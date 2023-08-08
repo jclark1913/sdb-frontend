@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import SDBApi from 'src/api/api';
 import EntriesList from 'src/components/entries/EntriesList';
+import { ExpandContext } from 'src/components/ContentArea';
+import { ArrowsPointingOutIcon, ArrowsPointingInIcon } from '@heroicons/react/20/solid';
 
 /** CollectionDetail
  *
@@ -22,6 +24,8 @@ function CollectionDetail() {
   const [collection, setCollection] = useState(null);
   const [errors, setErrors] = useState([]);
 
+  const { handleExpandClick, isExpanded } = useContext(ExpandContext);
+
   useEffect(function getCollectionAndEntriesOnMount() {
     async function getCollection() {
       try {
@@ -39,12 +43,26 @@ function CollectionDetail() {
 
   return (
     <div className="CollectionDetail">
-      <h4 className="CollectionDetail-title">{collection.name}</h4>
-      <p className="CollectionDetail-description">{collection.description}</p>
-      <p className="CollectionDetail-created-at">{collection.created_at}</p>
+      <div className="mb-5 pb-5 border-b flex flex-1 justify-between">
+        <div>
+          <h1 className='text-3xl font-medium'>{collection.name}</h1>
+          <p className="">{collection.description}</p>
+          <p className="">{collection.created_at}</p>
+        </div>
+        <div className="flex">
+        <button
+          onClick={() => console.log("Edit Collection button clicked")}
+          className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10">Edit</button>
+        <button
+          onClick={() => { handleExpandClick(); console.log("Expand Collection button clicked"); }}
+          className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10">
+          {isExpanded ? <ArrowsPointingInIcon className="stroke-white block h-6 w-6" /> : <ArrowsPointingOutIcon className="stroke-white block h-6 w-6" />}
+        </button>
+        </div>
+      </div>
       <EntriesList entries={collection.entries} />
     </div>
-  )
+  );
 
 }
 
