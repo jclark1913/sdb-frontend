@@ -12,7 +12,8 @@ import EntryDetail from "src/components/entries/EntryDetail";
  *
 */
 
-function RoutesList(){
+// prefer const definitions to function calls
+const RoutesList = () => {
   return (
     <div>
       <Routes>

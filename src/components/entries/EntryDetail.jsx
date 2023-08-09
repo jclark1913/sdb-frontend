@@ -26,18 +26,21 @@ function EntryDetail() {
   const [translatedTextShowMore, setTranslatedTextShowMore] = useState(false);
   const [aiSummaryShowMore, setAISummaryShowMore] = useState(false);
 
-  useEffect(function getEntryOnMount() {
-    async function getEntry() {
-      try {
-        const entry = await SDBApi.getEntry(id);
-        setEntry(entry);
-      } catch (err) {
-        setErrors(err);
-      }
-    }
-    getEntry();
-  }, [id, isLoading, errors]);
+  // no function definitions
+  // no async handling
+  // actually I'm going to rewrite this
+  // does the dependency on errors here mean that it's constantly retrying if an error is caught and set???
+  // that's very scary - you need retry logic of some sort, like exponential backoff or just not infinite
+  const getEntry = () => {
+    SDBApi.getEntry(id)
+        .then(entry => setEntry(entry))
+        .catch(err => setErrors(err))
+  }
+  useEffect(getEntry, [id, isLoading, errors])
 
+  // functions like this which are returning static content are a great use case for the useMemo hook
+  // sidenote - since we're not doing TS with type enforcement, what type checking is being done to make sure that the
+  // access being done in this function is safe? I don't see any null handling or safe access operators
   function handleFullTextShowMore() {
     if (entry.full_text === null) return "No full text available.";
 
@@ -64,16 +67,19 @@ function EntryDetail() {
       await SDBApi.translateEntries(data)
       setIsLoading(false)
     } catch (err) {
+      // now we're loading forever??
       setErrors(err)
     }
   }
 
+  // this looks the same as above except a different call on SDBApi - maybe a great time for a refactor passing in a callback
   async function handleSummarize() {
     const entryId = parseInt(id)
     const data = {"entry_ids": [entryId]}
     setIsLoading(true)
     try {
       await SDBApi.summarizeEntries(data)
+      // what is being done with these results?
       setIsLoading(false)
     } catch (err) {
       setErrors(err)

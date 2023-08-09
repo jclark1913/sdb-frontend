@@ -106,6 +106,7 @@ function EntriesList({ entries }) {
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => (
                 <th scope="col" className="px6 py-4" key={header.id} colSpan={header.colSpan}>
+                  {/* !header.isPlaceholder && flexRender(...)*/}
                   {header.isPlaceholder
                     ? null
                     : flexRender(

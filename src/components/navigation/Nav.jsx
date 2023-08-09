@@ -7,6 +7,8 @@ import { NavLink, useLocation } from 'react-router-dom'
 export default function Example() {
   const location = useLocation()
 
+  // define constants where possible outside of component scope to save resources
+  // can move everything except "current" outside, then calculate "current" at time of use rather than proactively
   const navigation = [
     { name: 'Home', href: '/', current: location.pathname === '/' },
     { name: 'Scrape Data', href: '/scrape', current: location.pathname === '/scrape' },
@@ -14,12 +16,17 @@ export default function Example() {
     { name: 'Logbook', href: '/logs', current: location.pathname === '/logs' },
   ]
 
+  //another shoutout for classnames
   function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
   }
 
+  // way too fat of a render call - need to break this down into logical groups and componentize them
+  // even if there's not necessarily reuse in componentizing things, breaking things into logical, grokkable portions
+  // makes your code easier to test (shoutout React Testing Library) and maintain
   return (
     <Disclosure as="nav" className="bg-gray-800">
+      {/*i don't understand how this works and it smells funny*/}
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -131,6 +138,7 @@ export default function Example() {
 
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
+              {/* it is almost always good practice to define separate components for elements created via loop or map like this */}
               {navigation.map((item) => (
                 <Disclosure.Button
                   key={item.name}
@@ -140,6 +148,7 @@ export default function Example() {
                     item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                     'block rounded-md px-3 py-2 text-base font-medium'
                   )}
+                  {/*item.current && 'page' is the syntactically sugary way in JS*/}
                   aria-current={item.current ? 'page' : undefined}
                 >
                   {item.name}
