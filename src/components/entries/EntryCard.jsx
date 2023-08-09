@@ -9,7 +9,8 @@ import React from "react";
  * App -> CollectionDetail -> EntriesList -> EntryCard
  *
 */
-
+// python snake_case syntax
+// quit it, you're in javascript, it's camelCase time
 function EntryCard({
   id,
   date_posted,

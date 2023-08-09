@@ -26,6 +26,7 @@ function CollectionDetail() {
 
   const { handleExpandClick, isExpanded } = useContext(ExpandContext);
 
+  // see my refactor in EntryDetail
   useEffect(function getCollectionAndEntriesOnMount() {
     async function getCollection() {
       try {
@@ -52,6 +53,8 @@ function CollectionDetail() {
         <div className='flex flex-col'>
           <div className="flex flex-grow justify-between">
             <button
+              {/*  consider getting strict about using `name` and other button attributes, especially accessibility attributes */}
+              {/*  then you could define a generic onClick handler that could debug this info for you, and any onClick defs you have with it*/}
               onClick={() => console.log("Edit Collection button clicked")}
               className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10">Edit</button>
             <button
