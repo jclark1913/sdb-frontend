@@ -1,117 +1,74 @@
 import React, { useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import EntryCard from "src/components/entries/EntryCard";
-import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender, createColumnHelper } from "@tanstack/react-table";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getPaginationRowModel,
+  flexRender,
+} from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import IndeterminateCheckbox from "./IndeterminateCheckbox";
+import { columns } from "./EntryTableColumns";
 
 /** EntriesList
  *
- * Props: entries: [{id, title, description, body, created_at, updated_at}, ...]
+ * Props:
+ *  - onSelectionChange: function defined in CollectionDetail to handle entry selection
+ *  - entries: array of entry objects from API
  *
- * State: isLoading: boolean
+ * State:
+ *  - columnVisibility: used to show/hide columns
+ *  - rowSelection: used to track selected rows
+ *  - sorting: used to track sorting
+ *
+ * Memoized state:
+ *  - data: Will refresh whenever entries prop changes
+ *
+ * Refs:
+ *  - selectedColumns: used to track selected columns and update ref in CollectionDetail
  *
  * App -> CollectionDetail -> EntriesList -> EntryCard
+ *
  *
 */
 
 function EntriesList({ onSelectionChange, entries }) {
 
   const navigate = useNavigate();
-
   const data = useMemo(() => entries, []);
 
+  // The states are bound to the tanstack table below
   const [columnVisibility, setColumnVisibility] = React.useState({});
-
   const [rowSelection, setRowSelection] = React.useState({});
+  const [sorting, setSorting] = React.useState([]);
 
-  // const ColumnResizeMode = 'onChange';
-
-  const columnHelper = createColumnHelper();
-
+  // This ref is used to track selected columns in EntriesList
   const selectedColumns = useRef([]);
 
+  // This first updates the ref in EntriesList, then calls the onSelectionChange
+  // function in CollectionDetail to update the state there
   const getIdsFromSelectedColumns = () => {
-    console.log('selectedColumns.current', selectedColumns.current)
-    selectedColumns.current = table.getSelectedRowModel().flatRows.map((row) => {return row.original.id});
+    selectedColumns.current = table.getSelectedRowModel().flatRows.map((row) => { return row.original.id; });
+    console.log('EntriesList > getIdsFromSelectedColumns > selectedColumns.current: ', selectedColumns.current);
     onSelectionChange(selectedColumns.current);
   };
 
-  const columns = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <IndeterminateCheckbox
-          {...{
-            checked: table.getIsAllRowsSelected(),
-            indeterminate: table.getIsSomeRowsSelected(),
-            onChange: table.getToggleAllRowsSelectedHandler(),
-          }}
-        />
-      ),
-      cell: ({ row }) => (
-        <IndeterminateCheckbox
-          {...{
-            checked: row.getIsSelected(),
-            disabled: !row.getCanSelect(),
-            indeterminate: row.getIsSomeSelected(),
-            onChange: row.getToggleSelectedHandler(),
-          }}
-        />
-      ),
-    },
-    columnHelper.accessor("id", {
-      header: "ID",
-    }),
-    // {
-    //   header: 'ID',
-    //   accessorKey: 'id',
-    //   maxSize: 1,
-    //   size: 1,
-    // },
-    {
-      header: 'Date posted',
-      accessorKey: 'date_posted',
-      maxSize: 1,
-    },
-    {
-      header: 'Publication',
-      accessorKey: 'publication',
-    },
-    {
-      header: 'Title (Arabic)',
-      accessorKey: 'title',
-    },
-    {
-      header: 'Title (translated)',
-      accessorKey: 'title_translated',
-    },
-    {
-      header: 'AI summary',
-      accessorKey: 'ai_summary',
-    },
-    {
-      header: 'Full text (Arabic)',
-      accessorKey: 'full_text',
-    },
-    {
-      header: 'Full text (translated)',
-      accessorKey: 'full_text_translated',
-    },
-  ];
-
-  const finalColumnDef = useMemo(() => {columns, []});
-
+  // Tanstack table logic
   const table = useReactTable({
     data,
     columns,
     state: {
       columnVisibility,
       rowSelection: rowSelection,
+      sorting: sorting,
     },
+    onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     onRowSelectionChange: setRowSelection,
+    getSortedRowModel: getSortedRowModel(),
     enableRowSelection: true,
     // getPaginationRowModel: getPaginationRowModel()
   });
@@ -131,45 +88,60 @@ function EntriesList({ onSelectionChange, entries }) {
           /> {' '}
           <span className="font-bold">Show/hide all</span>
         </label>
-        {table.getAllLeafColumns().map(column => {
-          return (
-            <div key={column.id} className="px-1">
-              <label>
-                <input
-                  {...{
-                    type: 'checkbox',
-                    checked: column.getIsVisible(),
-                    onChange: column.getToggleVisibilityHandler(),
-                    style: { marginRight: 8, textAlign: 'center' },
-                  }}
-                />{' '}
-                <span>{column.id}</span>
-              </label>
-            </div>
-          );
+        {table.getAllLeafColumns().map((column, idx) => {
+          if (idx !== 0) {
+            return (
+              <div key={column.id} className="px-1">
+                <label>
+                  <input
+                    {...{
+                      type: 'checkbox',
+                      checked: column.getIsVisible(),
+                      onChange: column.getToggleVisibilityHandler(),
+                      style: { marginRight: 8, textAlign: 'center' },
+                    }}
+                  />{' '}
+                  <span>{column.id}</span>
+                </label>
+              </div>
+            );
+          }
         })}
       </div>
+      {/* ^ TOGGLE COLUMN VISIBILITY ^ */}
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-center text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-          {table.getHeaderGroups().map(headerGroup => (
+          {table.getHeaderGroups().map((headerGroup, idx) => (
             <tr key={headerGroup.id}>
+
               {headerGroup.headers.map(header => (
-                <th scope="col" className="px-6 py-4" key={header.id} colSpan={header.colSpan} {...{
-                  style: {
-                    width: header.getSize()
-                  },
-                }}>
+                <th
+                  scope="col"
+                  className="px-6 py-4"
+                  key={header.id}
+                  colSpan={header.colSpan}
+                  onClick={header.column.getToggleSortingHandler()}{...{
+                    style: {
+                      width: header.getSize()
+                    },
+                  }}>
                   {header.isPlaceholder
                     ? null
                     : flexRender(
                       header.column.columnDef.header,
                       header.getContext()
                     )}
+                  {
+                    { asc: " (asc)", desc: " (desc)" }[
+                    header.column.getIsSorted() ?? null
+                    ]
+                  }
                 </th>
               ))}
             </tr>
           ))}
         </thead>
+        {/* ^ RENDER TABLE HEADERS - INCLUDES SORTING LOGIC^ */}
         <tbody>
           {table.getRowModel().rows.map(row => (
 
@@ -189,24 +161,10 @@ function EntriesList({ onSelectionChange, entries }) {
 
           ))}
         </tbody>
+        {/* ^ RENDER TABLE BODY ^ */}
 
       </table>
-      {/* <div className="EntriesList-List">
-        {entries.map(e => (
-          <EntryCard
-            key={e.id}
-            id={e.id}
-            date_posted={e.date_posted}
-            publication={e.publication}
-            title={e.title}
-            title_translated={e.title_translated}
-            full_text={e.full_text}
-            full_text_translated={e.full_text_translated}
-            ai_summary={e.ai_summary}
-            link={e.link}
-          />
-        ))}
-      </div> */}
+      {/* I can't help but feel there's a better way to do this, but it works. */}
       <div>{selectedColumns.current = getIdsFromSelectedColumns()}</div>
     </div>
   );
