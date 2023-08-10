@@ -70,7 +70,7 @@ function EntriesList({ onSelectionChange, entries }) {
     onRowSelectionChange: setRowSelection,
     getSortedRowModel: getSortedRowModel(),
     enableRowSelection: true,
-    // getPaginationRowModel: getPaginationRowModel()
+    getPaginationRowModel: getPaginationRowModel()
   });
 
 
@@ -153,7 +153,7 @@ function EntriesList({ onSelectionChange, entries }) {
                 <td
                   className="px-6 py-4"
                   key={cell.id}
-                  onClick={idx !== 0 ? () => navigate(`/entries/${row.getValue("id")}`) : null}>
+                  onClick={idx !== 0 ? () => navigate(`/entries/${row.original.id}`) : null}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
@@ -164,6 +164,71 @@ function EntriesList({ onSelectionChange, entries }) {
         {/* ^ RENDER TABLE BODY ^ */}
 
       </table>
+      <div className="flex flex-row gap-1">
+        <button
+          className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10"
+          onClick={() => table.setPageIndex(0)}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {"<<"}
+        </button>
+        <button
+          className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {"<"}
+        </button>
+        <button
+          className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          {">"}
+        </button>
+        <button
+          className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10"
+          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+          disabled={!table.getCanNextPage()}
+        >
+          {">>"}
+        </button>
+        <div className="flex flex-row gap-1">
+          <span className="text-sm text-gray-700 dark:text-gray-400 flex items-center gap-1">
+            <div>Page</div>
+            <strong>
+              {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+            </strong>
+          </span>
+          <span className="text-sm text-gray-700 dark:text-gray-400 flex items-center gap-1">
+            <div>| Go to page</div>
+            <input
+              className="w-10 text-center border rounded-md"
+              type="number"
+              defaultValue={table.getState().pagination.pageIndex + 1}
+              onChange={e => {
+                const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                table.setPageIndex(page);
+              }}
+            />
+          </span>
+          <select
+            className="text-sm text-gray-700 dark:text-gray-400"
+            value={table.getState().pagination.pageSize}
+            onChange={e => {
+              table.setPageSize(Number(e.target.value));
+            }}
+          >
+            {[10, 20, 30, 40, 50].map(pageSize => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+
+          </select>
+        </div>
+      </div>
+      {/* ^ PAGINATION LOGIC + BUTTONS ^ */}
       {/* I can't help but feel there's a better way to do this, but it works. */}
       <div>{selectedColumns.current = getIdsFromSelectedColumns()}</div>
     </div>
