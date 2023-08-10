@@ -1,8 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import EntryCard from "src/components/entries/EntryCard";
-import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender, createColumnHelper } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
+import IndeterminateCheckbox from "./IndeterminateCheckbox";
 
 /** EntriesList
  *
@@ -14,7 +15,7 @@ import { Link } from "react-router-dom";
  *
 */
 
-function EntriesList({ entries }) {
+function EntriesList({ onSelectionChange, entries }) {
 
   const navigate = useNavigate();
 
@@ -22,14 +23,56 @@ function EntriesList({ entries }) {
 
   const [columnVisibility, setColumnVisibility] = React.useState({});
 
+  const [rowSelection, setRowSelection] = React.useState({});
+
+  // const ColumnResizeMode = 'onChange';
+
+  const columnHelper = createColumnHelper();
+
+  const selectedColumns = useRef([]);
+
+  const getIdsFromSelectedColumns = () => {
+    console.log('selectedColumns.current', selectedColumns.current)
+    selectedColumns.current = table.getSelectedRowModel().flatRows.map((row) => {return row.original.id});
+    onSelectionChange(selectedColumns.current);
+  };
+
   const columns = [
     {
-      header: 'ID',
-      accessorKey: 'id',
+      id: "select",
+      header: ({ table }) => (
+        <IndeterminateCheckbox
+          {...{
+            checked: table.getIsAllRowsSelected(),
+            indeterminate: table.getIsSomeRowsSelected(),
+            onChange: table.getToggleAllRowsSelectedHandler(),
+          }}
+        />
+      ),
+      cell: ({ row }) => (
+        <IndeterminateCheckbox
+          {...{
+            checked: row.getIsSelected(),
+            disabled: !row.getCanSelect(),
+            indeterminate: row.getIsSomeSelected(),
+            onChange: row.getToggleSelectedHandler(),
+          }}
+        />
+      ),
     },
+    columnHelper.accessor("id", {
+      header: "ID",
+    }),
+    // {
+    //   header: 'ID',
+    //   accessorKey: 'id',
+    //   maxSize: 1,
+    //   size: 1,
+    // },
     {
       header: 'Date posted',
       accessorKey: 'date_posted',
+      maxSize: 1,
     },
     {
       header: 'Publication',
@@ -57,27 +100,33 @@ function EntriesList({ entries }) {
     },
   ];
 
+  const finalColumnDef = useMemo(() => {columns, []});
+
   const table = useReactTable({
     data,
     columns,
     state: {
       columnVisibility,
+      rowSelection: rowSelection,
     },
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
+    onRowSelectionChange: setRowSelection,
+    enableRowSelection: true,
     // getPaginationRowModel: getPaginationRowModel()
   });
 
 
   return (
     <div className="EntriesList overflow-x-auto">
+      <div className="w-full text-sm text-left text-gray-500 dark:text-gray-400">Selected: {table.getSelectedRowModel().rows.length} of {table.getCoreRowModel().rows.length}</div>
       <div className="flex flex-row gap-1 text-xs text-gray-700 rounded-md border p-4">
         <label>
           <input {...{
             type: "checkbox",
             checked: table.getIsAllColumnsVisible(),
             onChange: table.getToggleAllColumnsVisibilityHandler(),
-            style: { marginRight: 8, textAlign: 'center'},
+            style: { marginRight: 8, textAlign: 'center' },
           }}
           /> {' '}
           <span className="font-bold">Show/hide all</span>
@@ -105,7 +154,11 @@ function EntriesList({ entries }) {
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => (
-                <th scope="col" className="px6 py-4" key={header.id} colSpan={header.colSpan}>
+                <th scope="col" className="px-6 py-4" key={header.id} colSpan={header.colSpan} {...{
+                  style: {
+                    width: header.getSize()
+                  },
+                }}>
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -123,10 +176,12 @@ function EntriesList({ entries }) {
             <tr
               className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 hover:bg-gray-100 hover:cursor-pointer"
               key={row.id}
-              onClick={() => navigate(`/entries/${row.getValue("id")}`)}
             >
-              {row.getVisibleCells().map(cell => (
-                <td className="px-6 py-4" key={cell.id}>
+              {row.getVisibleCells().map((cell, idx) => (
+                <td
+                  className="px-6 py-4"
+                  key={cell.id}
+                  onClick={idx !== 0 ? () => navigate(`/entries/${row.getValue("id")}`) : null}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
@@ -152,6 +207,7 @@ function EntriesList({ entries }) {
           />
         ))}
       </div> */}
+      <div>{selectedColumns.current = getIdsFromSelectedColumns()}</div>
     </div>
   );
 
