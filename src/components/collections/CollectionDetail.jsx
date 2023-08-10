@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import SDBApi from 'src/api/api';
 import EntriesList from 'src/components/entries/EntriesList';
@@ -24,7 +24,17 @@ function CollectionDetail() {
   const [collection, setCollection] = useState(null);
   const [errors, setErrors] = useState([]);
 
+  const selectedIdsRef = useRef([]);
+
   const { handleExpandClick, isExpanded } = useContext(ExpandContext);
+
+  const handleSelectionChange = (selectedIds) => {
+    selectedIdsRef.current = selectedIds;
+  }
+
+  const handleActionWithSelectedIds = () => {
+    console.log("We have selected the following ids: ", selectedIdsRef.current);
+  };
 
   useEffect(function getCollectionAndEntriesOnMount() {
     async function getCollection() {
@@ -61,13 +71,13 @@ function CollectionDetail() {
             </button>
           </div>
           <button
-            onClick={() => console.log("Print to excel clicked")}
+            onClick={handleActionWithSelectedIds}
             className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10">
             Print to Excel
-            </button>
+          </button>
         </div>
       </div>
-      <EntriesList entries={collection.entries} />
+      <EntriesList onSelectionChange={handleSelectionChange}entries={collection.entries} />
     </div>
   );
 
