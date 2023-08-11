@@ -10,17 +10,17 @@ import React from "react";
  *
 */
 
-function EntryCard({
+const EntryCard = ({
   id,
-  date_posted,
+  datePosted,
   publication,
   title,
-  title_translated,
-  full_text,
-  full_text_translated,
-  ai_summary,
+  titleTranslated,
+  fullText,
+  fullTextTranslated,
+  aiSummary,
   link,
-}) {
+}) => {
 
   return (
     <div className="EntryCard">
@@ -28,7 +28,7 @@ function EntryCard({
         <a href={`/entries/${id}`}><p>Id: {id}</p></a>
       </div>
       <div className="EntryCard-Date-Posted">
-        <p>Date Posted: {date_posted}</p>
+        <p>Date Posted: {datePosted}</p>
       </div>
       <div className="EntryCard-Publication">
         <p>Publication: {publication}</p>
@@ -37,16 +37,16 @@ function EntryCard({
         <h3>{title}</h3>
       </div>
       <div className="EntryCard-Title-Translated">
-        <p>Title Translated: {title_translated}</p>
+        <p>Title Translated: {titleTranslated}</p>
       </div>
       <div className="EntryCard-Full-Text">
-        <p>{full_text}</p>
+        <p>{fullText}</p>
       </div>
       <div className="EntryCard-Full-Text-Translated">
-        <p>Full Text Translated: {full_text_translated}</p>
+        <p>Full Text Translated: {fullTextTranslated}</p>
       </div>
       <div className="EntryCard-AI-Summary">
-        <p>AI Summary: {ai_summary}</p>
+        <p>AI Summary: {aiSummary}</p>
       </div>
       <div className="EntryCard-Link">
         <a href={link}>Article Link</a>
