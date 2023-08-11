@@ -58,13 +58,42 @@ function CollectionDetail() {
   };
 
 
+  /** Translates entries selected by the user from the EntriesList table
+   *
+   * Input: Array of ids: [1, 2, 3, ...]
+   *
+   * Output: None
+   *
+   */
   const translateSelectedIds = async () => {
-    console.log("We have selected the following ids: ", selectedIdsRef.current);
+    console.log("Translating the following ids: ", selectedIdsRef.current);
     const currSelectedIds = selectedIdsRef.current;
     const data = { "entry_ids": currSelectedIds };
     setIsLoading(true);
     try {
       await SDBApi.translateEntries(data);
+    } catch (err) {
+      setErrors(err);
+    }
+    setRefresh(true);
+    setIsLoading(false);
+  };
+
+
+  /** Summarizes entries selected by the user from the EntriesList table
+   *
+   * Input: Array of ids: [1, 2, 3, ...]
+   *
+   * Output: None
+   *
+  */
+  const summarizeSelectedIds = async () => {
+    console.log("Summarizing the following ids: ", selectedIdsRef.current);
+    const currSelectedIds = selectedIdsRef.current;
+    const data = { "entry_ids": currSelectedIds };
+    setIsLoading(true);
+    try {
+      await SDBApi.summarizeEntries(data);
     } catch (err) {
       setErrors(err);
     }
@@ -149,7 +178,7 @@ function CollectionDetail() {
                     {({ active }) => (
                       <button
                         className={`${active ? 'bg-gray-100' : ''} block px-4 py-2 text-sm text-gray-700 w-full text-left`}
-                        onClick={handleActionWithSelectedIds}>
+                        onClick={summarizeSelectedIds}>
                         Summarize selected with AI
                       </button>
                     )}
