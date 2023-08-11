@@ -23,23 +23,22 @@ import { columns } from "./EntryTableColumns";
  *  - rowSelection: used to track selected rows
  *  - sorting: used to track sorting
  *
- * Memoized state:
- *  - data: Will refresh whenever entries prop changes
- *
  * Refs:
  *  - selectedColumns: used to track selected columns and update ref in CollectionDetail
  *
  * App -> CollectionDetail -> EntriesList -> EntryCard
- *
  *
 */
 
 function EntriesList({ onSelectionChange, entries }) {
 
   const navigate = useNavigate();
-  const data = useMemo(() => entries, []);
 
-  // The states are bound to the tanstack table below
+  // NOTE: Memoization is causing re-render issues and may or may not be incorporated in the future
+  // const data = useMemo(() => entries, []);
+  const data = entries;
+
+  // These states are bound to the tanstack table below
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [sorting, setSorting] = React.useState([]);
