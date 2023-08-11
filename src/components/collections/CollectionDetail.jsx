@@ -12,9 +12,11 @@ import { ArrowsPointingOutIcon, ArrowsPointingInIcon } from '@heroicons/react/20
  *
  * Props: None
  *
- * State: Company, isLoading
+ * State: collection, isLoading
  *
- * Routes -> CompanyDetail -> EntryCardList
+ * Routes -> CollectionDetail -> EntryCardList
+ *
+ * TODO: Improve docstring and clean up code
  *
 */
 
@@ -24,6 +26,8 @@ function CollectionDetail() {
 
   const [collection, setCollection] = useState(null);
   const [errors, setErrors] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const selectedIdsRef = useRef([]);
 
@@ -33,9 +37,6 @@ function CollectionDetail() {
     selectedIdsRef.current = selectedIds;
   };
 
-  const handleActionWithSelectedIds = () => {
-    console.log("We have selected the following ids: ", selectedIdsRef.current);
-  };
 
   useEffect(function getCollectionAndEntriesOnMount() {
     async function getCollection() {
@@ -47,8 +48,31 @@ function CollectionDetail() {
       }
     }
     getCollection();
-  }, [id]);
+    setRefresh(false);
+  }, [id, refresh]);
 
+  const handleActionWithSelectedIds = () => {
+    console.log("We have selected the following ids: ", selectedIdsRef.current);
+    const currSelectedIds = selectedIdsRef.current;
+
+  };
+
+
+  const translateSelectedIds = async () => {
+    console.log("We have selected the following ids: ", selectedIdsRef.current);
+    const currSelectedIds = selectedIdsRef.current;
+    const data = { "entry_ids": currSelectedIds };
+    setIsLoading(true);
+    try {
+      await SDBApi.translateEntries(data);
+    } catch (err) {
+      setErrors(err);
+    }
+    setRefresh(true);
+    setIsLoading(false);
+  };
+
+  if (isLoading) return <h1>RUNNING OPERATION...THIS MAY TAKE A MOMENT</h1>;
   if (errors.length) return <div>{errors}</div>;
   if (!collection) return <h1>Loading...</h1>;
 
@@ -116,7 +140,7 @@ function CollectionDetail() {
                     {({ active }) => (
                       <button
                         className={`${active ? 'bg-gray-100' : ''} block px-4 py-2 text-sm text-gray-700 w-full text-left`}
-                        onClick={handleActionWithSelectedIds}>
+                        onClick={translateSelectedIds}>
                         Translate selected
                       </button>
                     )}
