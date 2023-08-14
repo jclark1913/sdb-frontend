@@ -48,6 +48,12 @@ function CollectionList() {
     await SDBApi.addCollection(data);
   };
 
+  // TODO: ADD MODAL FOR CONFIRMATION
+  const deleteCollection = async (id) => {
+    await SDBApi.deleteCollection(id);
+    setCollections(collections.filter(c => c.id !== id));
+  };
+
   if (isLoading) {
     return <h1>Loading...</h1>;
   }
@@ -69,6 +75,7 @@ function CollectionList() {
               name={c.name}
               description={c.description}
               createdAt={c.created_at}
+              handleDelete={deleteCollection}
             />
           )) : null}
       </div>
