@@ -45,6 +45,12 @@ class SDBApi {
     return res;
   }
 
+  /** Add new collection */
+  static async addCollection(data) {
+    let res = await this.request(`api/collections`, data, "post");
+    return res;
+  }
+
   /** Get entry by id */
   static async getEntry(id) {
     let res = await this.request(`api/entries/${id}`);
