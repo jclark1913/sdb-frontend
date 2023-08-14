@@ -36,7 +36,7 @@ class SDBApi {
 
   static async getCollections() {
     let res = await this.request("api/collections");
-    return res
+    return res;
   }
 
   /** Get collection by id */
@@ -48,6 +48,12 @@ class SDBApi {
   /** Add new collection */
   static async addCollection(data) {
     let res = await this.request(`api/collections`, data, "post");
+    return res;
+  }
+
+  /** Delete collection by id */
+  static async deleteCollection(id) {
+    let res = await this.request(`api/collections/${id}`, {}, "delete");
     return res;
   }
 
@@ -66,7 +72,7 @@ class SDBApi {
   /**Summarize entries */
   static async summarizeEntries(data) {
     let res = await this.request(`api/summarize`, data, "post");
-    return res
+    return res;
   }
 
 }
