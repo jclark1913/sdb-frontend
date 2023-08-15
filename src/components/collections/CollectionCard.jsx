@@ -11,9 +11,10 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 
 function CollectionCard({ id, name, description, createdAt, handleDelete }) {
 
-  const onDelete = async () => {
-    await handleDelete(id);
-  }
+  const onDelete = () => {
+    const collectionData = { id: id, name: name, description: description, createdAt: createdAt };
+    handleDelete(collectionData);
+  };
 
   return (
     <div className="CollectionCard max-w-sm rounded shadow-sm border relative" href={`/collections/${id}`}>
@@ -25,12 +26,12 @@ function CollectionCard({ id, name, description, createdAt, handleDelete }) {
 
         </div>
       </a>
-          <TrashIcon onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-            className="stroke-black block h-6 w-6 absolute top-3 right-3 cursor-pointer hover:bg-red-500 rounded-md border"
-          />
+      <TrashIcon onClick={(e) => {
+        e.stopPropagation();
+        onDelete();
+      }}
+        className="stroke-black block h-6 w-6 absolute top-3 right-3 cursor-pointer hover:bg-red-500 rounded-md border"
+      />
     </div>
   );
 }

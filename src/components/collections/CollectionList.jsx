@@ -3,25 +3,31 @@ import { useNavigate } from 'react-router-dom';
 import CollectionCard from 'src/components/collections/CollectionCard';
 import SDBApi from 'src/api/api';
 import AddCollectionModal from './AddCollectionModal';
+import DeleteCollectionModal from './DeleteCollectionModal';
 
 /** CollectionList
  *
  *  Props: None
  *
  *  State:
- *        - collections: [{id, name, description}, ...]
- *        - isLoading: boolean
- *        - showModal: boolean
+ *    - collections: [{id, name, description}, ...]
+ *    - isLoading: boolean
+ *    - showModal: boolean
+ *    - currCollectionData: {id, name, description}
+ *    - showDeleteCollectionModal: boolean
+ *    - showCreateCollectionModal: boolean
  *
  *
- * App -> ??? -> CollectionList -> CollectionCard
+ * App -> CollectionList -> CollectionCard
  *
  */
 
 function CollectionList() {
   const [collections, setCollections] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
+  const [showCreateCollectionModal, setShowCreateCollectionModal] = useState(false);
+  const [showDeleteCollectionModal, setShowDeleteCollectionModal] = useState(false);
+  const [currCollectionData, setCurrCollectionData] = useState({}); // [{id, name, description}, ...
 
   const navigate = useNavigate();
 
@@ -40,6 +46,7 @@ function CollectionList() {
     }
   }, [isLoading]);
 
+  /** Receives name and description for db, adds new collection. */
   const handleAddCollection = async (name, description) => {
     const data = {
       name: name,
@@ -48,11 +55,20 @@ function CollectionList() {
     await SDBApi.addCollection(data);
   };
 
-  // TODO: ADD MODAL FOR CONFIRMATION
+  /** Deletes single collection by its id. */
   const deleteCollection = async (id) => {
     await SDBApi.deleteCollection(id);
     setCollections(collections.filter(c => c.id !== id));
+
   };
+
+  /** Displays the confirmation modal for deleting a collection when called and
+   * updates state to contain the collection data of the collection to be deleted.
+    */
+  const displayDeletionModal = (collectionData) => {
+    setCurrCollectionData(collectionData);
+    setShowDeleteCollectionModal(true);
+  }
 
   if (isLoading) {
     return <h1>Loading...</h1>;
@@ -63,7 +79,7 @@ function CollectionList() {
       <div className="mb-5 pb-5 border-b flex flex-1 justify-between">
         <h1 className='text-3xl font-medium'>Saved Collections</h1>
         <button
-          onClick={() => setShowModal(!showModal)}
+          onClick={() => setShowCreateCollectionModal(!showCreateCollectionModal)}
           className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border">+ Collection</button>
       </div>
       <div className="CollectionList-List grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2">
@@ -75,11 +91,12 @@ function CollectionList() {
               name={c.name}
               description={c.description}
               createdAt={c.created_at}
-              handleDelete={deleteCollection}
+              handleDelete={displayDeletionModal}
             />
           )) : null}
       </div>
-      <AddCollectionModal showModal={showModal} onClose={() => setShowModal(false)} onSubmit={handleAddCollection} />
+      <AddCollectionModal showModal={showCreateCollectionModal} onClose={() => setShowCreateCollectionModal(false)} onSubmit={handleAddCollection} />
+      <DeleteCollectionModal showModal={showDeleteCollectionModal} onClose={() => setShowDeleteCollectionModal(false)} onDelete={deleteCollection} collectionData={currCollectionData}/>
     </div>
   );
 }
