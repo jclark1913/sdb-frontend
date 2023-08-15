@@ -4,7 +4,7 @@ import CollectionDetail from "src/components/collections/CollectionDetail";
 import CollectionList from "src/components/collections/CollectionList";
 import Homepage from "src/components/homepage/Homepage";
 import EntryDetail from "src/components/entries/EntryDetail";
-
+import ScrapeForm from "src/components/scrape/ScrapeForm";
 
 /** App-wide routes
  *
@@ -20,6 +20,7 @@ function RoutesList(){
         <Route path="/collections" element={<CollectionList />} />
         <Route path="/collections/:id" element={<CollectionDetail />} />
         <Route path="/entries/:id" element={<EntryDetail />} />
+        <Route path="/scrape" element={<ScrapeForm />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
