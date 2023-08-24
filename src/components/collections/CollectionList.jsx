@@ -33,8 +33,6 @@ function CollectionList() {
 
   console.log(collections, "Collections in CollectionList (state)");
 
-  useEffect;
-
   useEffect(function getCollectionsOnMount() {
     async function getCollections() {
       const collections = await SDBApi.getCollections();
