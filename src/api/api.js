@@ -63,18 +63,23 @@ class SDBApi {
     return res;
   }
 
-  /**Translate entries */
+  /** Translate entries */
   static async translateEntries(data) {
     let res = await this.request(`api/translate`, data, "post");
     return res;
   }
 
-  /**Summarize entries */
+  /** Summarize entries */
   static async summarizeEntries(data) {
     let res = await this.request(`api/summarize`, data, "post");
     return res;
   }
 
+  /** Get sources */
+  static async getSources() {
+    let res = await this.request(`api/scrape`);
+    return res;
+  }
 }
 
 export default SDBApi;
