@@ -17,13 +17,12 @@ function CollectionCard({ id, name, description, createdAt, handleDelete }) {
   };
 
   return (
-    <div className="CollectionCard max-w-sm rounded shadow-sm border relative" href={`/collections/${id}`}>
-      <a className="hover:bg-gray-700 hover:text-white block" href={`/collections/${id}`}>
-        <div className="card-body px-6 py-4 flex-col">
+    <div className="CollectionCard max-w-sm rounded shadow-sm border relative flex flex-col" href={`/collections/${id}`}>
+      <a className="hover:bg-gray-700 hover:text-white flex flex-grow" href={`/collections/${id}`}>
+        <div className="card-body px-6 py-4 flex-grow">
           <h5 className="text-xl font-medium pb-3">{name}</h5>
-          <p className="card-text text-">{description}</p>
+          <p className="card-text">{description}</p>
           <p className="card-text self-end">{createdAt}</p>
-
         </div>
       </a>
       <TrashIcon onClick={(e) => {
