@@ -12,14 +12,43 @@ const timePresets = [
     { value: 0, label: "Custom" },
 ];
 
+/**
+ * ScrapeForm
+ *
+ * Form used by the user to select the timeframe, sources, and destination collection for a new scrape.
+ *
+ * Props: None
+ *
+ * State:
+ *
+ * ** The following states are updated on mount and used to populate the form:
+ *
+ * - sources: array of objects w/ publication data from API (ex: [{value: "SANA", label: "Syrian Arab News Agency (SANA)"}, ...])
+ * - collections: array of objects w/ collection data from API (ex: [{id: 1, name: "Syria", created_at: "2021-05-01T00:00:00.000Z"}, ...])
+ * - isLoading: boolean
+ *
+ * ** The following states are updated by the user and used as form inputs:
+ *
+ * - timePreset: number (seconds)
+ * - selectedSources: array of strings (publication names)
+ *
+ * App -> ScrapeForm
+ *
+ */
 const ScrapeForm = () => {
+
+    // General states
     const [sources, setSources] = useState([]);
     const [collections, setCollections] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    // Form states
     const [timePreset, setTimePreset] = useState(timePresets[0]);
     const [selectedSources, setSelectedSources] = useState([]);
 
+    /**
+     * This hook runs on mount and fetch all sources and collections from the API.
+     */
     useEffect(function getSourcesAndCollectionsOnMount() {
         async function getSourcesAndCollections() {
             const sources = await SDBApi.getSources();
@@ -33,11 +62,16 @@ const ScrapeForm = () => {
         }
     });
 
+    /**
+     * Handles selection of time presets from the dropdown menu.
+     */
     const handlePresetChange = (event) => {
         setTimePreset(event.target.value);
-        console.log(timePreset);
     };
 
+    /**
+     * Toggles all source checked/unchecked and updates the selectedSources state.
+     */
     const toggleAllSources = (e) => {
         e.preventDefault();
         if (selectedSources.length === sources.length) {
@@ -47,6 +81,9 @@ const ScrapeForm = () => {
         setSelectedSources(sources.map(source => source.value));
     };
 
+    /**
+     * Toggles a given source checked/unchecked and updates the selectedSources state.
+     */
     const toggleSource = (sourceValue) => {
         if (selectedSources.includes(sourceValue)) {
             setSelectedSources(selectedSources.filter(source => source !== sourceValue));
@@ -140,24 +177,6 @@ const ScrapeForm = () => {
 
 
             </form>
-
-
-
-            {/* <ul>
-                <li>Selected timestamp: </li>
-                <li>Selected publications: </li>
-                <li>Selected collection: OR CREATE NEW?? </li>
-                <ul>CHECKBOXES
-                    <li>[] Include translations</li>
-                    <li>[] Include summaries</li>
-                </ul>
-
-                <li>SCRAPE </li>
-                <li>AREA FOR LOGS</li>
-
-            </ul> */}
-
-
         </div>
     );
 };
