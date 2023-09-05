@@ -45,6 +45,7 @@ const ScrapeForm = () => {
     // Form states
     const [timePreset, setTimePreset] = useState(timePresets[0]);
     const [selectedSources, setSelectedSources] = useState([]);
+    const [selectedCollection, setSelectedCollection] = useState([])
 
     /**
      * This hook runs on mount and fetch all sources and collections from the API.
@@ -92,7 +93,15 @@ const ScrapeForm = () => {
         setSelectedSources([...selectedSources, sourceValue]);
     };
 
+    /**
+     * Updates the selectedCollection state.
+     */
+    const updateSelectedCollection = (event) => {
+        setSelectedCollection(event.target.value);
+    }
+
     console.log(selectedSources);
+    console.log(selectedCollection);
 
 
     return (
@@ -161,7 +170,8 @@ const ScrapeForm = () => {
                     <div className="w-1/2">
                         <h2 className="text-xl font-medium">Collection</h2>
                         <p>All data gathered will be added to the selected collection.</p>
-                        <select className="mt-5 text-lg">
+                        <select defaultValue="" onChange={updateSelectedCollection} className="mt-5 text-lg">
+                                <option value="" disabled>Select a collection</option>
                             {collections.map((collection, idx) => (
                                 <option key={idx} value={collection.id}>{collection.name} -- {collection.created_at}</option>
                             ))}
