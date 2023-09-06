@@ -26,11 +26,13 @@ const timePresets = [
  * - sources: array of objects w/ publication data from API (ex: [{value: "SANA", label: "Syrian Arab News Agency (SANA)"}, ...])
  * - collections: array of objects w/ collection data from API (ex: [{id: 1, name: "Syria", created_at: "2021-05-01T00:00:00.000Z"}, ...])
  * - isLoading: boolean
+ * - timePreset: number (seconds)
  *
  * ** The following states are updated by the user and used as form inputs:
  *
- * - timePreset: number (seconds)
  * - selectedSources: array of strings (publication names)
+ * - selectedCollection: string (collection id)
+ * - selectedCustomTime: number (seconds)
  *
  * App -> ScrapeForm
  *
@@ -44,8 +46,11 @@ const ScrapeForm = () => {
 
     // Form states
     const [timePreset, setTimePreset] = useState(timePresets[0]);
+    const [selectedCustomTime, setSelectedCustomTime] = useState(0);
     const [selectedSources, setSelectedSources] = useState([]);
-    const [selectedCollection, setSelectedCollection] = useState([])
+    const [selectedCollection, setSelectedCollection] = useState([]);
+
+    console.log("LOADING STATUS: ", isLoading);
 
     /**
      * This hook runs on mount and fetch all sources and collections from the API.
@@ -61,7 +66,7 @@ const ScrapeForm = () => {
         if (isLoading) {
             getSourcesAndCollections();
         }
-    });
+    }, []);
 
     /**
      * Handles selection of time presets from the dropdown menu.
@@ -98,11 +103,60 @@ const ScrapeForm = () => {
      */
     const updateSelectedCollection = (event) => {
         setSelectedCollection(event.target.value);
+    };
+
+    const toUnixTimestamp = (dateTimeString) => {
+        const date = new Date(dateTimeString);
+        return Math.floor(date.getTime() / 1000);
+    };
+
+    const getStopTimestamp = () => {
+        const currTimestamp = Math.floor(Date.now() / 1000);
+        console.log("CURRENT TIMESTAMP: ", currTimestamp);
+        if (timePreset < 1) {
+            return toUnixTimestamp(selectedCustomTime);
+        }
+        return currTimestamp - Number(timePreset);
     }
+
+    /**
+     * Handles form submission.
+     */
+    const handleSubmit = async (event) => {
+        if (event) {
+            console.log(event)
+        }
+        event.preventDefault();
+        const stopTimestamp = getStopTimestamp();
+        const collectionId = selectedCollection;
+        const selectedScrapers = selectedSources;
+
+        const scrapeParameters = {
+            stop_timestamp: stopTimestamp,
+            collection_id: collectionId,
+            selected_scrapers: selectedScrapers
+        };
+
+        try {
+            setIsLoading(true);
+            let response = await SDBApi.scrapeData(scrapeParameters);
+        } catch (error) {
+            console.error("Error", error);
+        } finally {
+            setIsLoading(false);
+            console.log("Reached finally block")
+        }
+
+
+    };
 
     console.log(selectedSources);
     console.log(selectedCollection);
+    console.log(selectedCustomTime);
 
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="ScrapeForm">
@@ -110,7 +164,7 @@ const ScrapeForm = () => {
                 <h1 className='text-3xl font-medium'>Scrape Data</h1>
             </div>
 
-            <form className="">
+            <form onSubmit={handleSubmit} className="">
                 <div className="flex justify-between m-5 border-b pb-10 pt-10">
                     <div className="w-1/2">
                         <h2 className="text-xl font-medium">Timeframe</h2>
@@ -131,7 +185,7 @@ const ScrapeForm = () => {
                         {timePreset < 1 &&
                             <div className="mt-5">
                                 <label htmlFor="timestamp" className="block text-sm font-medium text-gray-700">Select a date & time: </label>
-                                <input className="timestamp" type="datetime-local"></input>
+                                <input className="timestamp" type="datetime-local" onChange={e => setSelectedCustomTime(e.target.value)}></input>
                             </div>}
                     </div>
                 </div>
@@ -152,7 +206,7 @@ const ScrapeForm = () => {
                                             className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
                                             onChange={() => toggleSource(source.value)}
                                             checked={selectedSources.includes(source.value)}
-                                             />
+                                        />
                                         <label
                                             htmlFor={source.value}
                                             className="ml-3 block text-sm font-light text-gray-700">
@@ -171,7 +225,7 @@ const ScrapeForm = () => {
                         <h2 className="text-xl font-medium">Collection</h2>
                         <p>All data gathered will be added to the selected collection.</p>
                         <select defaultValue="" onChange={updateSelectedCollection} className="mt-5 text-lg">
-                                <option value="" disabled>Select a collection</option>
+                            <option value="" disabled>Select a collection</option>
                             {collections.map((collection, idx) => (
                                 <option key={idx} value={collection.id}>{collection.name} -- {collection.created_at}</option>
                             ))}
@@ -180,7 +234,7 @@ const ScrapeForm = () => {
                 </div>
 
                 <div className="flex justify-center m-5 pb-10 pt-10">
-                    <button className="bg-red-500 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium border">Scrape</button>
+                    <button type="submit" className="bg-red-500 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 text-xl font-medium border">Scrape</button>
                 </div>
 
 
