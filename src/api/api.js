@@ -80,6 +80,12 @@ class SDBApi {
     let res = await this.request(`api/scrape`);
     return res;
   }
+
+  /** Scrape data */
+  static async scrapeData(data) {
+    let res = await this.request(`api/scrape`, data, "post");
+    return res;
+  }
 }
 
 export default SDBApi;
