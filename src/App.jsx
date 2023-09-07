@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Nav from 'src/components/navigation/Nav';
 import RoutesList from './RoutesList';
 import ContentArea from 'src/components/ContentArea';
+import Footer from 'src/components/footer/Footer';
 
 function App() {
 
@@ -14,6 +15,7 @@ function App() {
       <ContentArea key={location.pathname}>
         <RoutesList />
       </ContentArea>
+      <Footer />
     </div>
   );
 }
