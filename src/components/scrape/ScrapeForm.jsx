@@ -45,7 +45,7 @@ const ScrapeForm = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     // Form states
-    const [timePreset, setTimePreset] = useState(timePresets[0]);
+    const [timePreset, setTimePreset] = useState(timePresets[0].value);
     const [selectedCustomTime, setSelectedCustomTime] = useState(0);
     const [selectedSources, setSelectedSources] = useState([]);
     const [selectedCollection, setSelectedCollection] = useState([]);
@@ -117,14 +117,14 @@ const ScrapeForm = () => {
             return toUnixTimestamp(selectedCustomTime);
         }
         return currTimestamp - Number(timePreset);
-    }
+    };
 
     /**
      * Handles form submission.
      */
     const handleSubmit = async (event) => {
         if (event) {
-            console.log(event)
+            console.log(event);
         }
         event.preventDefault();
         const stopTimestamp = getStopTimestamp();
@@ -144,7 +144,7 @@ const ScrapeForm = () => {
             console.error("Error", error);
         } finally {
             setIsLoading(false);
-            console.log("Reached finally block")
+            console.log("Reached finally block");
         }
 
 
@@ -175,9 +175,16 @@ const ScrapeForm = () => {
                     </div>
                     <div className="w-1/3 mt-2">
                         <label htmlFor="presets" className="block text-sm font-medium text-gray-700">Select a preset range: </label>
-                        <select value={timePreset} onChange={handlePresetChange} className="presets mt-1">
+                        <select
+                            value={timePreset}
+                            onChange={handlePresetChange}
+                            className="presets mt-1">
                             {timePresets.map((preset, idx) => (
-                                <option key={idx} value={preset.value}>{preset.label}</option>
+                                <option
+                                    key={idx}
+                                    value={preset.value}>
+                                    {preset.label}
+                                </option>
                             ))}
                         </select>
 
