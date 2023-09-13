@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import CollectionCard from "./CollectionCard";
 import { SDBApi } from "src/api/api";
 import AddCollectionModal from "./AddCollectionModal";
 import DeleteCollectionModal from "./DeleteCollectionModal";
-import { CollectionType } from "src/types/globalTypes";
+import {
+  CollectionType,
+  AddCollectionModalContextType,
+} from "src/types/globalTypes";
+import { AddCollectionModalContext } from "src/components/ContentArea.tsx";
 /** CollectionList
  *
  *  Props: None
@@ -25,13 +29,14 @@ import { CollectionType } from "src/types/globalTypes";
 function CollectionList() {
   const [collections, setCollections] = useState<CollectionType[] | any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [showCreateCollectionModal, setShowCreateCollectionModal] =
-    useState<boolean>(false);
   const [showDeleteCollectionModal, setShowDeleteCollectionModal] =
     useState<boolean>(false);
   const [currCollectionData, setCurrCollectionData] = useState<{
     [key: string]: string | number;
   }>({}); // [{id, name, description}, ...
+
+  const { isAddCollectionModalOpen, handleAddCollectionModalClick, handleAddCollection } =
+    useContext(AddCollectionModalContext) as AddCollectionModalContextType;
 
   const navigate = useNavigate();
 
@@ -50,17 +55,6 @@ function CollectionList() {
     },
     [isLoading]
   );
-
-  /** Receives name and description for db, adds new collection.
-   * TODO: Refactor and fix interface
-   */
-  const handleAddCollection = async (name: string, description: string) => {
-    const data = {
-      name: name,
-      description: description,
-    };
-    await SDBApi.addCollection(data);
-  };
 
   /** Deletes single collection by its id. */
   const deleteCollection = async (id: number) => {
@@ -89,9 +83,13 @@ function CollectionList() {
       <div className="mb-5 pb-5 border-b flex flex-1 justify-between">
         <h1 className="text-3xl font-medium">Saved Collections</h1>
         <button
-          onClick={() =>
-            setShowCreateCollectionModal(!showCreateCollectionModal)
-          }
+          onClick={() => {
+            handleAddCollectionModalClick();
+            console.log(
+              "Add Collection button clicked, status: ",
+              isAddCollectionModalOpen
+            );
+          }}
           className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border"
         >
           + Collection
@@ -112,8 +110,8 @@ function CollectionList() {
           : null}
       </div>
       <AddCollectionModal
-        showModal={showCreateCollectionModal}
-        onClose={() => setShowCreateCollectionModal(false)}
+        showModal={isAddCollectionModalOpen}
+        onClose={() => handleAddCollectionModalClick()}
         onSubmit={handleAddCollection}
       />
       <DeleteCollectionModal
