@@ -121,7 +121,7 @@ function CollectionDetail() {
   if (!collection) return <h1>Loading...</h1>;
 
   return (
-    <div className="CollectionDetail">
+    <div className="CollectionDetail flex flex-col" style={{ height: 'calc(100vh - 140px'}}>
       <div className="mb-5 pb-5 border-b flex flex-1 justify-between">
         <div>
           <h1 className="text-3xl font-medium">{collection.name}</h1>

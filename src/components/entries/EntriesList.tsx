@@ -80,7 +80,7 @@ const EntriesList: React.FC<EntriesListProps> = ({ onSelectionChange, entries })
 
 
   return (
-    <div className="EntriesList overflow-x-auto">
+    <div className="EntriesList overflow-x-auto overflow-y-auto max-w-screen">
       <div className="w-full text-sm text-left text-gray-500 dark:text-gray-400">Selected: {table.getSelectedRowModel().rows.length} of {table.getCoreRowModel().rows.length}</div>
       <div className="flex flex-row gap-1 text-xs text-gray-700 rounded-md border p-4">
         <label>
