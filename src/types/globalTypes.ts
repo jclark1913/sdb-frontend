@@ -1,10 +1,16 @@
 import { InputHTMLAttributes, ReactNode } from 'react';
 
-/** Global types */
+/** Context Types */
 
 export interface ExpandContextType {
   isExpanded: boolean;
   handleExpandClick: () => void;
+}
+
+export interface AddCollectionModalContextType {
+  isAddCollectionModalOpen: boolean;
+  handleAddCollectionModalClick: () => void;
+  handleAddCollection: (name: string, description: string) => Promise<void>;
 }
 
 /** API Response Types  */
