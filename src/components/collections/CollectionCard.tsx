@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import { CollectionCardProps } from 'src/types/globalTypes';
 
 /** Shows basic info about a given collection
  *
@@ -9,7 +9,7 @@ import { TrashIcon } from '@heroicons/react/24/outline';
  * CollectionList -> CollectionCard
  */
 
-function CollectionCard({ id, name, description, createdAt, handleDelete }) {
+const CollectionCard: React.FC<CollectionCardProps> = ({ id, name, description, createdAt, handleDelete }) => {
 
   const onDelete = () => {
     const collectionData = { id: id, name: name, description: description, createdAt: createdAt };
@@ -17,7 +17,7 @@ function CollectionCard({ id, name, description, createdAt, handleDelete }) {
   };
 
   return (
-    <div className="CollectionCard max-w-sm rounded shadow-sm border relative flex flex-col" href={`/collections/${id}`}>
+    <div className="CollectionCard max-w-sm rounded shadow-sm border relative flex flex-col">
       <a className="hover:bg-gray-700 hover:text-white flex flex-grow" href={`/collections/${id}`}>
         <div className="card-body px-6 py-4 flex-grow">
           <h5 className="text-xl font-medium pb-3">{name}</h5>

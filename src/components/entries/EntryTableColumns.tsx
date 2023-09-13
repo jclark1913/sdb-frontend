@@ -1,9 +1,11 @@
 import { createColumnHelper } from "@tanstack/react-table"
-import IndeterminateCheckbox from "./IndeterminateCheckbox"
+import IndeterminateCheckbox from "./IndeterminateCheckbox.tsx"
+import { ColumnDef } from "@tanstack/react-table";
+import { EntryType } from "src/types/globalTypes.ts";
 
 const columnHelper = createColumnHelper()
 
-export const columns = [
+export const columns: ColumnDef<EntryType>[] = [
   {
     id: "select",
     header: ({ table }) => (

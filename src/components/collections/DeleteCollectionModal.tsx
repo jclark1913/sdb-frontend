@@ -1,4 +1,5 @@
 import React from "react";
+import { DeleteCollectionModalProps } from "src/types/globalTypes";
 
 /** DeleteCollectionModal
  *
@@ -10,10 +11,10 @@ import React from "react";
  *
  * App -> CollectionList -> DeleteCollectionModal
  */
-const DeleteCollectionModal = ({ showModal, onClose, collectionData, onDelete }) => {
+const DeleteCollectionModal: React.FC<DeleteCollectionModalProps> = ({ showModal, onClose, collectionData, onDelete }) => {
 
     const handleDelete = async () => {
-        await onDelete(collectionData.id);
+        await onDelete(Number(collectionData.id));
         onClose();
     };
 

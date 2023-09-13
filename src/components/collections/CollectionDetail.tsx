@@ -1,10 +1,24 @@
-import React, { useEffect, useState, useContext, useRef, Fragment } from 'react';
-import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { useParams } from 'react-router-dom';
-import SDBApi from 'src/api/api';
-import EntriesList from 'src/components/entries/EntriesList';
-import { ExpandContext } from 'src/components/ContentArea';
-import { ArrowsPointingOutIcon, ArrowsPointingInIcon } from '@heroicons/react/20/solid';
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useRef,
+  Fragment,
+} from "react";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { useParams } from "react-router-dom";
+import { SDBApi } from "src/api/api.ts";
+import EntriesList from "src/components/entries/EntriesList.tsx";
+import { ExpandContext } from "src/components/ContentArea.tsx";
+import {
+  ArrowsPointingOutIcon,
+  ArrowsPointingInIcon,
+} from "@heroicons/react/20/solid";
+import {
+  ExpandContextType,
+  ErrorType,
+  CollectionType,
+} from "src/types/globalTypes.ts";
 
 /** CollectionDetail
  *
@@ -18,45 +32,47 @@ import { ArrowsPointingOutIcon, ArrowsPointingInIcon } from '@heroicons/react/20
  *
  * TODO: Improve docstring and clean up code
  *
-*/
+ */
 
 function CollectionDetail() {
   const { id } = useParams();
   console.debug("CollectionDetail", "id=", id);
 
-  const [collection, setCollection] = useState(null);
-  const [errors, setErrors] = useState([]);
+  const [collection, setCollection] = useState<CollectionType | null>(null);
+  const [errors, setErrors] = useState<ErrorType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
-  const selectedIdsRef = useRef([]);
+  const selectedIdsRef = useRef<number[]>([]);
 
-  const { handleExpandClick, isExpanded } = useContext(ExpandContext);
+  const { handleExpandClick, isExpanded } = useContext(
+    ExpandContext
+  ) as ExpandContextType;
 
-  const handleSelectionChange = (selectedIds) => {
+  const handleSelectionChange = (selectedIds: number[]) => {
     selectedIdsRef.current = selectedIds;
   };
 
-
-  useEffect(function getCollectionAndEntriesOnMount() {
-    async function getCollection() {
-      try {
-        const collection = await SDBApi.getCollection(id);
-        setCollection(collection);
-      } catch (err) {
-        setErrors(err);
+  useEffect(
+    function getCollectionAndEntriesOnMount() {
+      async function getCollection() {
+        try {
+          const collection = await SDBApi.getCollection(Number(id)); //TODO: Add interface here
+          setCollection(collection);
+        } catch (err) {
+          setErrors(err as ErrorType);
+        }
       }
-    }
-    getCollection();
-    setRefresh(false);
-  }, [id, refresh]);
+      getCollection();
+      setRefresh(false);
+    },
+    [id, refresh]
+  );
 
   const handleActionWithSelectedIds = () => {
     console.log("We have selected the following ids: ", selectedIdsRef.current);
     const currSelectedIds = selectedIdsRef.current;
-
   };
-
 
   /** Translates entries selected by the user from the EntriesList table
    *
@@ -68,17 +84,16 @@ function CollectionDetail() {
   const translateSelectedIds = async () => {
     console.log("Translating the following ids: ", selectedIdsRef.current);
     const currSelectedIds = selectedIdsRef.current;
-    const data = { "entry_ids": currSelectedIds };
+    const data = { entry_ids: currSelectedIds };
     setIsLoading(true);
     try {
       await SDBApi.translateEntries(data);
     } catch (err) {
-      setErrors(err);
+      setErrors(err as ErrorType);
     }
     setRefresh(true);
     setIsLoading(false);
   };
-
 
   /** Summarizes entries selected by the user from the EntriesList table
    *
@@ -86,45 +101,56 @@ function CollectionDetail() {
    *
    * Output: None
    *
-  */
+   */
   const summarizeSelectedIds = async () => {
     console.log("Summarizing the following ids: ", selectedIdsRef.current);
     const currSelectedIds = selectedIdsRef.current;
-    const data = { "entry_ids": currSelectedIds };
+    const data = { entry_ids: currSelectedIds };
     setIsLoading(true);
     try {
       await SDBApi.summarizeEntries(data);
     } catch (err) {
-      setErrors(err);
+      setErrors(err as ErrorType);
     }
     setRefresh(true);
     setIsLoading(false);
   };
 
   if (isLoading) return <h1>RUNNING OPERATION...THIS MAY TAKE A MOMENT</h1>;
-  if (errors.length) return <div>{errors}</div>;
+  // if (errors.length) return <div>{errors}</div>; TODO: Add more robust error handling
   if (!collection) return <h1>Loading...</h1>;
 
   return (
     <div className="CollectionDetail">
       <div className="mb-5 pb-5 border-b flex flex-1 justify-between">
         <div>
-          <h1 className='text-3xl font-medium'>{collection.name}</h1>
+          <h1 className="text-3xl font-medium">{collection.name}</h1>
           <p className="">{collection.description}</p>
           <p className="">{collection.created_at}</p>
         </div>
-        <div className='flex flex-col'>
+        <div className="flex flex-col">
           <div className="flex flex-grow justify-between">
             <button
               onClick={() => console.log("Edit Collection button clicked")}
-              className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10">Edit</button>
+              className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10"
+            >
+              Edit
+            </button>
             <button
-              onClick={() => { handleExpandClick(); console.log("Expand Collection button clicked"); }}
-              className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10">
-              {isExpanded ? <ArrowsPointingInIcon className="stroke-white block h-6 w-6" /> : <ArrowsPointingOutIcon className="stroke-white block h-6 w-6" />}
+              onClick={() => {
+                handleExpandClick();
+                console.log("Expand Collection button clicked");
+              }}
+              className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10"
+            >
+              {isExpanded ? (
+                <ArrowsPointingInIcon className="stroke-white block h-6 w-6" />
+              ) : (
+                <ArrowsPointingOutIcon className="stroke-white block h-6 w-6" />
+              )}
             </button>
           </div>
-          <Disclosure as="div" className="" >
+          <Disclosure as="div" className="">
             <Menu as="div" className="">
               <div>
                 <Menu.Button className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border max-h-10">
@@ -150,8 +176,11 @@ function CollectionDetail() {
                   <Menu.Item>
                     {({ active }) => (
                       <button
-                        className={`${active ? 'bg-gray-100' : ''} block px-4 py-2 text-sm text-gray-700 w-full text-left`}
-                        onClick={handleActionWithSelectedIds}>
+                        className={`${
+                          active ? "bg-gray-100" : ""
+                        } block px-4 py-2 text-sm text-gray-700 w-full text-left`}
+                        onClick={handleActionWithSelectedIds}
+                      >
                         Print to excel
                       </button>
                     )}
@@ -159,8 +188,11 @@ function CollectionDetail() {
                   <Menu.Item>
                     {({ active }) => (
                       <button
-                        className={`${active ? 'bg-gray-100' : ''} block px-4 py-2 text-sm text-gray-700 w-full text-left`}
-                        onClick={handleActionWithSelectedIds}>
+                        className={`${
+                          active ? "bg-gray-100" : ""
+                        } block px-4 py-2 text-sm text-gray-700 w-full text-left`}
+                        onClick={handleActionWithSelectedIds}
+                      >
                         Migrate selected
                       </button>
                     )}
@@ -168,8 +200,11 @@ function CollectionDetail() {
                   <Menu.Item>
                     {({ active }) => (
                       <button
-                        className={`${active ? 'bg-gray-100' : ''} block px-4 py-2 text-sm text-gray-700 w-full text-left`}
-                        onClick={translateSelectedIds}>
+                        className={`${
+                          active ? "bg-gray-100" : ""
+                        } block px-4 py-2 text-sm text-gray-700 w-full text-left`}
+                        onClick={translateSelectedIds}
+                      >
                         Translate selected
                       </button>
                     )}
@@ -177,24 +212,27 @@ function CollectionDetail() {
                   <Menu.Item>
                     {({ active }) => (
                       <button
-                        className={`${active ? 'bg-gray-100' : ''} block px-4 py-2 text-sm text-gray-700 w-full text-left`}
-                        onClick={summarizeSelectedIds}>
+                        className={`${
+                          active ? "bg-gray-100" : ""
+                        } block px-4 py-2 text-sm text-gray-700 w-full text-left`}
+                        onClick={summarizeSelectedIds}
+                      >
                         Summarize selected with AI
                       </button>
                     )}
                   </Menu.Item>
-
                 </Menu.Items>
-
               </Transition>
             </Menu>
           </Disclosure>
         </div>
       </div>
-      <EntriesList onSelectionChange={handleSelectionChange} entries={collection.entries} />
+      <EntriesList
+        onSelectionChange={handleSelectionChange}
+        entries={collection.entries}
+      />
     </div>
   );
-
 }
 
 export default CollectionDetail;

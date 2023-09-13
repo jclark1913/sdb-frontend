@@ -1,9 +1,9 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import CollectionDetail from "src/components/collections/CollectionDetail";
-import CollectionList from "src/components/collections/CollectionList";
-import Homepage from "src/components/homepage/Homepage";
-import EntryDetail from "src/components/entries/EntryDetail";
+import CollectionDetail from "./components/collections/CollectionDetail";
+import CollectionList from "./components/collections/CollectionList";
+import Homepage from "./components/homepage/Homepage";
+import EntryDetail from "./components/entries/EntryDetail";
 import ScrapeForm from "src/components/scrape/ScrapeForm";
 
 /** App-wide routes
@@ -12,7 +12,7 @@ import ScrapeForm from "src/components/scrape/ScrapeForm";
  *
 */
 
-function RoutesList(){
+const RoutesList = () => {
   return (
     <div>
       <Routes>

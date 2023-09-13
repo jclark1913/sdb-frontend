@@ -1,4 +1,5 @@
 import React from "react";
+import { EntryCardProps } from "src/types/globalTypes.ts";
 
 /** EntryCard
  *
@@ -10,7 +11,7 @@ import React from "react";
  *
 */
 
-const EntryCard = ({
+const EntryCard: React.FC<EntryCardProps> = ({
   id,
   datePosted,
   publication,

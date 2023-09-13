@@ -4,7 +4,7 @@ import { Bars3Icon, BellIcon, XMarkIcon, Cog8ToothIcon } from '@heroicons/react/
 import { NavLink, useLocation } from 'react-router-dom'
 
 
-export default function Example() {
+export const Nav = () => {
   const location = useLocation()
 
   const navigation = [
@@ -14,7 +14,7 @@ export default function Example() {
     { name: 'Logbook', href: '/logs', current: location.pathname === '/logs' },
   ]
 
-  function classNames(...classes) {
+  function classNames(...classes: any[]) {
     return classes.filter(Boolean).join(' ')
   }
 

@@ -1,6 +1,6 @@
-import React, { useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import EntryCard from "src/components/entries/EntryCard";
+import EntryCard from "./EntryCard.tsx";
 import {
   useReactTable,
   getCoreRowModel,
@@ -9,8 +9,10 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
-import IndeterminateCheckbox from "./IndeterminateCheckbox";
-import { columns } from "./EntryTableColumns";
+import IndeterminateCheckbox from "./IndeterminateCheckbox.tsx";
+import { columns } from "src/components/entries/EntryTableColumns.tsx";
+import { SortingState } from "@tanstack/react-table";
+import { EntriesListProps } from "src/types/globalTypes";
 
 /** EntriesList
  *
@@ -30,7 +32,7 @@ import { columns } from "./EntryTableColumns";
  *
 */
 
-function EntriesList({ onSelectionChange, entries }) {
+const EntriesList: React.FC<EntriesListProps> = ({ onSelectionChange, entries }) => {
 
   const navigate = useNavigate();
 
@@ -41,10 +43,10 @@ function EntriesList({ onSelectionChange, entries }) {
   // These states are bound to the tanstack table below
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [sorting, setSorting] = React.useState([]);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   // This ref is used to track selected columns in EntriesList
-  const selectedColumns = useRef([]);
+  const selectedColumns = useRef<any[]>([]);
 
   // This first updates the ref in EntriesList, then calls the onSelectionChange
   // function in CollectionDetail to update the state there
@@ -53,6 +55,10 @@ function EntriesList({ onSelectionChange, entries }) {
     console.log('EntriesList > getIdsFromSelectedColumns > selectedColumns.current: ', selectedColumns.current);
     onSelectionChange(selectedColumns.current);
   };
+
+  useEffect(() => {
+    getIdsFromSelectedColumns();
+  }, []);
 
   // Tanstack table logic
   const table = useReactTable({
@@ -132,7 +138,7 @@ function EntriesList({ onSelectionChange, entries }) {
                     )}
                   {
                     { asc: " (asc)", desc: " (desc)" }[
-                    header.column.getIsSorted() ?? null
+                    header.column.getIsSorted() ? 'asc' : 'desc'
                     ]
                   }
                 </th>
@@ -152,7 +158,7 @@ function EntriesList({ onSelectionChange, entries }) {
                 <td
                   className="px-6 py-4"
                   key={cell.id}
-                  onClick={idx !== 0 ? () => navigate(`/entries/${row.original.id}`) : null}>
+                  onClick={idx !== 0 ? () => navigate(`/entries/${row.original.id}`) : undefined}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
@@ -229,7 +235,7 @@ function EntriesList({ onSelectionChange, entries }) {
       </div>
       {/* ^ PAGINATION LOGIC + BUTTONS ^ */}
       {/* I can't help but feel there's a better way to do this, but it works. */}
-      <div>{selectedColumns.current = getIdsFromSelectedColumns()}</div>
+      {/* <div>{selectedColumns.current = getIdsFromSelectedColumns()}</div> */}
     </div>
   );
 

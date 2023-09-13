@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AddCollectionModalProps } from 'src/types/globalTypes';
 
 /** AddCollectionModal
  *
@@ -18,15 +19,15 @@ import { useNavigate } from 'react-router-dom';
  * TODO: Refactor slightly to improve readability
  *
  */
-const AddCollectionModal = ({ showModal, onClose, onSubmit }) => {
+const AddCollectionModal: React.FC<AddCollectionModalProps> = ({ showModal, onClose, onSubmit }) => {
 
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({ name: '', description: '' }); // [name, description]
-    const [formErrors, setFormErrors] = useState([]);
+    const [formErrors, setFormErrors] = useState<string[]>([]);
 
-    // TODO: Add better error handling and form validation
-    const handleSubmit = async (e) => {
+    // TODO: Add better error handling and form validation, find event type
+    const handleSubmit = async (e: any) => {
         if (formData.name.length < 1) {
             setFormErrors(['Collection name is required']);
             e.preventDefault();
@@ -41,7 +42,7 @@ const AddCollectionModal = ({ showModal, onClose, onSubmit }) => {
         return;
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e: any) => {
         const { name, value } = e.target;
         setFormData(data => ({
             ...data,
@@ -72,7 +73,6 @@ const AddCollectionModal = ({ showModal, onClose, onSubmit }) => {
 
                 <textarea
                     name="description"
-                    type="text"
                     value={formData.description}
                     onChange={handleChange}
                     placeholder="Collection description (optional)"
