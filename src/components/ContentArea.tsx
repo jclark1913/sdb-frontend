@@ -1,25 +1,45 @@
-import React, {
-  createContext,
-  useState,
-  FunctionComponent,
-} from "react";
-
-import { ExpandContextType, ContentAreaProps } from "src/types/globalTypes.ts";
+import React, { createContext, useState, FunctionComponent } from "react";
+import { SDBApi } from "src/api/api.ts";
+import {
+  ExpandContextType,
+  ContentAreaProps,
+  AddCollectionModalContextType,
+} from "src/types/globalTypes.ts";
 
 export const ExpandContext = createContext<ExpandContextType | undefined>(
   undefined
 );
+
+export const AddCollectionModalContext = createContext<
+  AddCollectionModalContextType | undefined
+>(undefined);
 
 /** Content Area
  *
  * TODO: Write docstring
  *
  */
-export const ContentArea: FunctionComponent<ContentAreaProps> = ({ children }) => {
+export const ContentArea: FunctionComponent<ContentAreaProps> = ({
+  children,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isAddCollectionModalOpen, setIsAddCollectionModalOpen] =
+    useState(false);
 
   const handleExpandClick = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  const handleAddCollectionModalClick = () => {
+    setIsAddCollectionModalOpen(!isAddCollectionModalOpen);
+  };
+
+  const handleAddCollection = async (name: string, description: string) => {
+    const data = {
+      name: name,
+      description: description,
+    };
+    await SDBApi.addCollection(data);
   };
 
   const contentAreaSize = isExpanded
@@ -28,7 +48,11 @@ export const ContentArea: FunctionComponent<ContentAreaProps> = ({ children }) =
 
   return (
     <ExpandContext.Provider value={{ isExpanded, handleExpandClick }}>
-      <div className={contentAreaSize}>{children}</div>
+      <AddCollectionModalContext.Provider
+        value={{ isAddCollectionModalOpen, handleAddCollectionModalClick, handleAddCollection }}
+      >
+        <div className={contentAreaSize}>{children}</div>
+      </AddCollectionModalContext.Provider>
     </ExpandContext.Provider>
   );
 };
