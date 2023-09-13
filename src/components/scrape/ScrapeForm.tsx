@@ -1,8 +1,14 @@
-import React, { MouseEventHandler } from "react";
+import React, { MouseEventHandler, useContext } from "react";
 import Multi from "react-select";
 import { useState, useEffect } from "react";
 import { SDBApi } from "src/api/api";
-import { CollectionType, SourceType } from "src/types/globalTypes";
+import {
+  CollectionType,
+  SourceType,
+  AddCollectionModalContextType,
+} from "src/types/globalTypes.ts";
+import { AddCollectionModalContext } from "src/components/ContentArea.tsx";
+import AddCollectionModal from "src/components/collections/AddCollectionModal.tsx";
 
 const timePresets = [
   { value: 86400, label: "Last 24 hours" },
@@ -45,8 +51,8 @@ const ScrapeForm = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Modal states
-  const [showCreateCollectionModal, setShowCreateCollectionModal] =
-    useState<boolean>(false);
+  // const [showCreateCollectionModal, setShowCreateCollectionModal] =
+  //   useState<boolean>(false);
 
   // Form states
   const [timePreset, setTimePreset] = useState(timePresets[0].value);
@@ -55,6 +61,14 @@ const ScrapeForm = () => {
   const [selectedCollection, setSelectedCollection] = useState<any[]>([]);
 
   console.log("LOADING STATUS: ", isLoading);
+
+  const {
+    isAddCollectionModalOpen,
+    handleAddCollectionModalClick,
+    handleAddCollection,
+  } = useContext(AddCollectionModalContext) as AddCollectionModalContextType;
+
+  console.log(isAddCollectionModalOpen, "isAddCollectionModalOpen");
 
   /**
    * This hook runs on mount and fetch all sources and collections from the API.
@@ -283,9 +297,13 @@ const ScrapeForm = () => {
           <div className="flex flex-col justify-end">
             <button
               type="button"
-              onClick={() =>
-                setShowCreateCollectionModal(!showCreateCollectionModal)
-              }
+              onClick={() => {
+                handleAddCollectionModalClick();
+                console.log(
+                  "Add Collection button clicked, status: ",
+                  isAddCollectionModalOpen
+                );
+              }}
               className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border"
             >
               + Collection
@@ -302,6 +320,11 @@ const ScrapeForm = () => {
           </button>
         </div>
       </form>
+      <AddCollectionModal
+        showModal={isAddCollectionModalOpen}
+        onClose={() => handleAddCollectionModalClick()}
+        onSubmit={handleAddCollection}
+      />
     </div>
   );
 };
