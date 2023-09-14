@@ -94,7 +94,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
           e.stopPropagation();
           onDelete();
         }}
-        className="stroke-black block h-6 w-6 absolute top-3 right-3 cursor-pointer hover:bg-red-500 rounded-md border"
+        className="stroke-black block h-6 w-6 absolute top-3 right-3 cursor-pointer bg-red-400 hover:bg-red-500 rounded-md border"
       />
 
       <PencilSquareIcon
@@ -102,7 +102,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
           e.stopPropagation();
           onEdit();
         }}
-        className="stroke-black block h-6 w-6 absolute top-3 right-10 cursor-pointer hover:bg-blue-500 rounded-md border"
+        className="stroke-black block h-6 w-6 absolute top-3 right-10 cursor-pointer bg-blue-200 hover:bg-blue-500 rounded-md border"
       />
     </div>
   );
