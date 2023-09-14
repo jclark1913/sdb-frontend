@@ -77,6 +77,12 @@ export class SDBApi {
     return res;
   }
 
+  /** Edit collection by id */
+  static async editCollection(id: number, data: object) {
+    let res = await this.request(`api/collections/${id}`, data, "post");
+    return res;
+  }
+
   /** Translate entries */
   static async translateEntries(data: object) {
     let res = await this.request(`api/translate`, data, "post");
