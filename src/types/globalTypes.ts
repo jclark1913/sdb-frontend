@@ -20,7 +20,7 @@ export interface CollectionType {
   name: string;
   description: string;
   created_at: string | number;
-  entries: EntryType[];
+  entries?: EntryType[];
 }
 
 export interface EntryType {
@@ -55,6 +55,7 @@ export interface CollectionCardProps {
   description: string;
   createdAt: string;
   handleDelete: (data: { id: number; name: string; description: string; createdAt: string; }) => void;
+  handleEdit: (data: { [key: string]: string | number }) => void;
 }
 
 export interface DeleteCollectionModalProps {
@@ -72,6 +73,13 @@ export interface AddCollectionModalProps {
   showModal: boolean;
   onClose: () => void;
   onSubmit: (name: string, description: string) => Promise<void>;
+}
+
+export interface EditCollectionModalProps {
+  showModal: boolean;
+  onClose: () => void;
+  collectionData: {[key: string]: string | number};
+  onEdit: (id: number, collectionData: {[key: string]: string | number}) => Promise<void>;
 }
 
 export interface EntryCardProps {
