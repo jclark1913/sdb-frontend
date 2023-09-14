@@ -82,7 +82,7 @@ const AddCollectionModal: React.FC<AddCollectionModalProps> = ({ showModal, onCl
 
                 <div className='flex gap-2'>
                     <button
-                        className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border"
+                        className="hover:bg-red-500 hover:text-white rounded-md px-3 py-2 text-sm font-medium border"
                         onClick={onClose}>
                         Cancel
                     </button>
