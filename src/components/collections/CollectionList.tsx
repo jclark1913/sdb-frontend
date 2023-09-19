@@ -129,7 +129,7 @@ function CollectionList() {
           + Collection
         </button>
       </div>
-      <div className="CollectionList-List grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2">
+      <div className="CollectionList-List grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
         {isLoading === false
           ? collections.map((c) => (
               <CollectionCard
