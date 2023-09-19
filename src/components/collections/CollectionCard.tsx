@@ -54,8 +54,8 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
    * Formats description displayed on collection card to be no longer than 100 characters
    */
   const formatDescriptionForCollectionCard = (str: string) => {
-    if (str.length > 100) {
-      return str.substring(0, 100) + "...";
+    if (str.length > 220) {
+      return str.substring(0, 220) + "...";
     }
     return str;
   };
@@ -74,19 +74,20 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
   };
 
   return (
-    <div className="CollectionCard max-w-sm rounded shadow-sm border relative flex flex-col">
+    <div className="rounded shadow-sm border relative flex flex-col min-h-[200px] max-h-[200px]">
       <a
-        className="hover:bg-gray-700 hover:text-white flex flex-grow"
+        className="hover:bg-gray-700 hover:text-white flex flex-grow flex-col"
         href={`/collections/${id}`}
       >
-        <div className="card-body px-4 py-4 flex-grow overflow-x-hidden">
+        <div className="px-4 py-4 flex-grow flex-col overflow-x-hidden">
           <h5 className="text-xl font-medium pb-3">
             {formatNameForCollectionCard(name)}
           </h5>
-          <p className="card-text">
-            {formatDescriptionForCollectionCard(description)}
+          <p className="">{formatDescriptionForCollectionCard(description)}</p>
+
+          <p className="absolute bottom-1 text-sm font-medium">
+            <hr className="mb-1"></hr>Created {createdAt}
           </p>
-          <p className="card-text self-end">{createdAt}</p>
         </div>
       </a>
       <TrashIcon
