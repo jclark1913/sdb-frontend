@@ -19,6 +19,7 @@ import {
   ErrorType,
   CollectionType,
 } from "src/types/globalTypes.ts";
+import { formatCollectionDate } from "src/utils/time_formatting";
 
 /** CollectionDetail
  *
@@ -126,7 +127,7 @@ function CollectionDetail() {
         <div>
           <h1 className="text-3xl font-medium">{collection.name}</h1>
           <p className="">{collection.description}</p>
-          <p className="">{collection.created_at}</p>
+          <p className="">{formatCollectionDate(Number(collection.created_at))}</p>
         </div>
         <div className="flex flex-col">
           <div className="flex flex-grow justify-between">
