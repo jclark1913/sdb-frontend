@@ -1,9 +1,10 @@
-import { createColumnHelper } from "@tanstack/react-table"
-import IndeterminateCheckbox from "./IndeterminateCheckbox.tsx"
+import { createColumnHelper } from "@tanstack/react-table";
+import IndeterminateCheckbox from "./IndeterminateCheckbox.tsx";
 import { ColumnDef } from "@tanstack/react-table";
 import { EntryType } from "src/types/globalTypes.ts";
+import { formatEntryDateInTable } from "src/utils/time_formatting.ts";
 
-const columnHelper = createColumnHelper()
+const columnHelper = createColumnHelper();
 
 export const columns: ColumnDef<EntryType>[] = [
   {
@@ -39,32 +40,36 @@ export const columns: ColumnDef<EntryType>[] = [
     // },
   },
   {
-    header: 'Date posted',
-    accessorKey: 'date_posted',
-    maxSize: 1,
+    header: "Date posted",
+    accessorKey: "date_posted",
+    minSize: 100,
+    cell: ({ cell }) => {
+      const val = cell.getValue();
+      return formatEntryDateInTable(Number(val));
+    },
   },
   {
-    header: 'Publication',
-    accessorKey: 'publication',
+    header: "Publication",
+    accessorKey: "publication",
   },
   {
-    header: 'Title (Arabic)',
-    accessorKey: 'title',
+    header: "Title (Arabic)",
+    accessorKey: "title",
   },
   {
-    header: 'Title (translated)',
-    accessorKey: 'title_translated',
+    header: "Title (translated)",
+    accessorKey: "title_translated",
   },
   {
-    header: 'AI summary',
-    accessorKey: 'ai_summary',
+    header: "AI summary",
+    accessorKey: "ai_summary",
   },
   {
-    header: 'Full text (Arabic)',
-    accessorKey: 'full_text',
+    header: "Full text (Arabic)",
+    accessorKey: "full_text",
   },
   {
-    header: 'Full text (translated)',
-    accessorKey: 'full_text_translated',
+    header: "Full text (translated)",
+    accessorKey: "full_text_translated",
   },
 ];
