@@ -20,14 +20,23 @@ import {
   CollectionType,
 } from "src/types/globalTypes.ts";
 import { formatCollectionDate } from "src/utils/time_formatting";
+import { set } from "date-fns";
 
 /** CollectionDetail
  *
- * Renders information about a collection, including its entries.
+ * Renders information about a collection, including its entries. Uses Tanstack Table v8 to
+ * display all entries and allows for data to be organized and modified.
  *
  * Props: None
  *
- * State: collection, isLoading
+ * State:
+ *    - collection
+ *    - isLoading
+ *    - errors
+ *    - refresh
+ *
+ * Refs:
+ *    - selectedIdsRef: Array of ids of entries selected by the user
  *
  * Routes -> CollectionDetail -> EntryCardList
  *
@@ -43,6 +52,7 @@ function CollectionDetail() {
   const [errors, setErrors] = useState<ErrorType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [collectionDescriptionShowMore, setCollectionDescriptionShowMore] = useState<boolean>(false);
 
   const selectedIdsRef = useRef<number[]>([]);
 
@@ -117,19 +127,44 @@ function CollectionDetail() {
     setIsLoading(false);
   };
 
+  const handleCollectionDescriptionShowMore = () => {
+    if (collection && collection.description === null) return;
+
+    return collectionDescriptionShowMore ?
+      collection.description :
+      collection.description.slice(0, 100);
+  }
+
   if (isLoading) return <h1>RUNNING OPERATION...THIS MAY TAKE A MOMENT</h1>;
   // if (errors.length) return <div>{errors}</div>; TODO: Add more robust error handling
   if (!collection) return <h1>Loading...</h1>;
 
   return (
-    <div className="CollectionDetail flex flex-col" style={{ height: 'calc(100vh - 140px'}}>
-      <div className="mb-5 pb-5 border-b flex flex-1 justify-between">
-        <div>
+    <div
+      className="CollectionDetail flex flex-col"
+      style={{ height: "calc(100vh - 140px" }}
+    >
+      <div className="mb-5 pb-5 border-b flex flex-0 justify-between">
+        <div className="flex flex-col gap-3">
           <h1 className="text-3xl font-medium">{collection.name}</h1>
-          <p className="">{collection.description}</p>
-          <p className="">{formatCollectionDate(Number(collection.created_at))}</p>
+          <p className="max-w-2xl">
+          {handleCollectionDescriptionShowMore()}
+              {collection.description.length > 100 && (
+                <button
+                  onClick={() =>
+                    setCollectionDescriptionShowMore(!collectionDescriptionShowMore)
+                  }
+                  className="text-blue-500 hover:text-blue-700"
+                >
+                  {collectionDescriptionShowMore ? "...show less" : "...show more"}
+                </button>
+              )}
+            </p>
+          <p className="">
+            {formatCollectionDate(Number(collection.created_at))}
+          </p>
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col max-h-20">
           <div className="flex flex-grow justify-between">
             <button
               onClick={() => console.log("Edit Collection button clicked")}
@@ -228,10 +263,14 @@ function CollectionDetail() {
           </Disclosure>
         </div>
       </div>
-      <EntriesList
-        onSelectionChange={handleSelectionChange}
-        entries={collection.entries}
-      />
+      {collection.entries.length === 0 || !(collection.entries) ? (
+        <p className="text-center mb-2">This collection is empty. <a className="text-blue-500" href="/scrape">Scrape data</a> to add entries.</p>
+      ) : (
+        <EntriesList
+          onSelectionChange={handleSelectionChange}
+          entries={collection.entries}
+        />
+      )}
     </div>
   );
 }
