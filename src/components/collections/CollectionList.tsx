@@ -117,7 +117,7 @@ function CollectionList() {
   }
 
   return (
-    <div className="CollectionList">
+    <div className="CollectionList pb-5">
       <div className="mb-5 pb-5 border-b flex flex-1 justify-between">
         <h1 className="text-3xl font-medium">Saved Collections</h1>
         <button
