@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { SDBApi } from "src/api/api";
 import { PaperClipIcon, RectangleGroupIcon } from "@heroicons/react/20/solid";
 import { EntryType, ErrorType } from "src/types/globalTypes";
+import { formatEntryDateInDetails } from "src/utils/time_formatting";
 
 /** EntryDetail
  *
@@ -128,7 +129,7 @@ const EntryDetail = () => {
               Date posted
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {entry.date_posted}
+              {formatEntryDateInDetails(entry.date_posted)}
             </dd>
           </div>
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
