@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import CollectionCard from "./CollectionCard";
 import { SDBApi } from "src/api/api";
+import CollectionCard from "./CollectionCard";
 import AddCollectionModal from "./AddCollectionModal";
 import DeleteCollectionModal from "./DeleteCollectionModal";
 import EditCollectionModal from "./EditCollectionModal";
@@ -10,6 +10,8 @@ import {
   AddCollectionModalContextType,
 } from "src/types/globalTypes";
 import { AddCollectionModalContext } from "src/components/ContentArea.tsx";
+import { formatCollectionDate } from "src/utils/time_formatting";
+
 /** CollectionList
  *
  *  Props: None
@@ -135,7 +137,7 @@ function CollectionList() {
                 id={c.id}
                 name={c.name}
                 description={c.description}
-                createdAt={c.created_at}
+                createdAt={formatCollectionDate(c.created_at)}
                 handleDelete={displayDeletionModal}
                 handleEdit={displayEditModal}
               />
