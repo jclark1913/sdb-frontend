@@ -51,6 +51,10 @@ function CollectionList() {
     [key: string]: string | number;
   }>({});
 
+  // Search details
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [order, setOrder] = useState<string>("asc");
+
   // Get context for AddCollectionModal logic
   const {
     isAddCollectionModalOpen,
@@ -65,7 +69,7 @@ function CollectionList() {
   useEffect(
     function getCollectionsOnMount() {
       async function getCollections() {
-        const collections = await SDBApi.getCollections();
+        const collections = await SDBApi.getCollections(searchTerm, order);
         setCollections(collections);
         setIsLoading(false);
       }
@@ -73,7 +77,7 @@ function CollectionList() {
         getCollections();
       }
     },
-    [isLoading]
+    [isLoading, searchTerm, order]
   );
 
   /** Deletes single collection by its id. */
@@ -112,22 +116,45 @@ function CollectionList() {
     setShowEditCollectionModal(true);
   };
 
+  const toggleOrder = () => {
+    if (order === "asc") {
+      setOrder("desc");
+    } else {
+      setOrder("asc");
+    }
+  };
+
   if (isLoading) {
     return <h1>Loading...</h1>;
   }
 
   return (
     <div className="CollectionList pb-5">
-      <div className="mb-5 pb-5 border-b flex flex-1 justify-between">
-        <h1 className="text-3xl font-medium">Saved Collections</h1>
-        <button
-          onClick={() => {
-            handleAddCollectionModalClick();
-          }}
-          className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border"
-        >
-          + Collection
-        </button>
+      <div>
+        <div className="mb-5 pb-5 border-b flex flex-1 justify-between">
+          <h1 className="text-3xl font-medium">Saved Collections</h1>
+          <button
+            onClick={() => {
+              handleAddCollectionModalClick();
+            }}
+            className="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium border"
+          >
+            + Collection
+          </button>
+        </div>
+        <div className="flex flex-1 justify-between">
+          <div>
+            Search: Bar
+          </div>
+          <button
+            onClick={() => {
+              toggleOrder();
+              setIsLoading(true);
+            }}
+          >
+            Sort by: {order === "desc" ? "Earliest" : "Most Recent"}
+          </button>
+        </div>
       </div>
       <div className="CollectionList-List grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
         {isLoading === false
