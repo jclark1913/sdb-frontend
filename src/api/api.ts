@@ -48,8 +48,11 @@ export class SDBApi {
 
   /** Get collections */
 
-  static async getCollections() {
-    let res = await this.request("api/collections");
+  static async getCollections(search: string, order: string) {
+    let res = await this.request("api/collections", {
+      search: search,
+      order: order,
+    });
     return res;
   }
 
