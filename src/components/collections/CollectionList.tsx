@@ -73,9 +73,10 @@ function CollectionList() {
         setCollections(collections);
         setIsLoading(false);
       }
-      if (isLoading) {
-        getCollections();
-      }
+      // if (isLoading) {
+      //   getCollections();
+      // }
+      getCollections();
     },
     [isLoading, searchTerm, order]
   );
@@ -130,8 +131,8 @@ function CollectionList() {
 
   return (
     <div className="CollectionList pb-5">
-      <div>
-        <div className="mb-5 pb-5 border-b flex flex-1 justify-between">
+      <div className="mb-4 border-b pb-2">
+        <div className="mb-5 flex flex-1 justify-between">
           <h1 className="text-3xl font-medium">Saved Collections</h1>
           <button
             onClick={() => {
@@ -144,15 +145,21 @@ function CollectionList() {
         </div>
         <div className="flex flex-1 justify-between">
           <div>
-            Search: Bar
+            <input
+              type="text"
+              className="border rounded-md px-3 py-2 text-sm font-medium"
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+              }}
+              placeholder="Search saved collections"
+            />
           </div>
           <button
             onClick={() => {
               toggleOrder();
-              setIsLoading(true);
             }}
           >
-            Sort by: {order === "desc" ? "Earliest" : "Most Recent"}
+            Sort by: {order === "desc" ? "Most Recent" : "First Created"}
           </button>
         </div>
       </div>
